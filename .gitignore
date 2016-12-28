@@ -1,0 +1,8 @@
+Debug/
+Release/
+ipch/
+*.suo
+*.opendb
+*.vcxproj.filters
+*.vcxproj.user
+*.db
