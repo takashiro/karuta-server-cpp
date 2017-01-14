@@ -1,7 +1,9 @@
 #include "Server.h"
 #include "Room.h"
+#include "User.h"
 
 #include "network/TcpServer.h"
+#include "network/WebSocket.h"
 
 #include <map>
 
@@ -16,7 +18,6 @@ struct Server::Private
 Server::Server()
 	: d(new Private)
 {
-
 }
 
 Server::~Server()
@@ -64,6 +65,18 @@ Room *Server::findRoom(uint id)
 	std::map<uint, Room *>::iterator iter = d->rooms.find(id);
 	if (iter != d->rooms.end()) {
 		return iter->second;
+	} else {
+		return nullptr;
+	}
+}
+
+User *Server::next()
+{
+	TcpSocket *socket = d->socket.next();
+	if (socket) {
+		WebSocket *websocket = new WebSocket(socket);
+		User *user = new User(websocket);
+		return user;
 	} else {
 		return nullptr;
 	}

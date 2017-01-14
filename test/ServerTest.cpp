@@ -1,6 +1,21 @@
 #include "test.h"
 
+#include <thread>
+
 #include <core/Server.h>
+#include <core/User.h>
+#include <util/Json.h>
+#include <network/WebSocket.h>
+
+namespace
+{
+	int result = 0;
+
+	void SetNumber(User *user, const Json &arg)
+	{
+		result = arg.toInt();
+	}
+}
 
 namespace UnitTest
 {
@@ -29,6 +44,42 @@ namespace UnitTest
 
 			Room *room3 = server.findRoom(19920526);
 			assert(room3 == nullptr);
+		}
+
+		TEST_METHOD(ServerNextUserTest)
+		{
+			ushort port = static_cast<ushort>(rand(1000, 65535));
+			int number = rand();
+
+			std::map<int, User::Action> actions;
+			actions[1010] = SetNumber;
+
+			Server server;
+			assert(server.listen(HostAddress::Any, port));
+
+			std::thread server_thread([&]() {
+				User *user = server.next();
+				if (user) {
+					user->setAction(&actions);
+					user->exec();
+					delete user;
+				}
+			});
+
+			std::thread client_thread([&]() {
+				WebSocket *socket = new WebSocket;
+				if (socket->open(HostAddress::Local, port)) {
+					User user(socket);
+					user.notify(1010, number);
+				} else {
+					delete socket;
+				}
+			});
+
+			server_thread.join();
+			client_thread.join();
+
+			assert(result == number);
 		}
 	};
 }
