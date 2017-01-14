@@ -165,6 +165,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="NetworkTest.cpp" />
+    <ClCompile Include="ServerTest.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="UserTest.cpp" />
   </ItemGroup>
