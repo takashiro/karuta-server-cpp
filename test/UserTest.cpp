@@ -27,13 +27,16 @@ public:
 	TEST_METHOD(UserActionTest)
 	{
 		ushort port = static_cast<ushort>(rand(1000, 65535));
+		int number = rand();
 
 		std::map<int, User::Action> actions;
 		actions[10] = TestAction;
 
 		std::thread server_thread([&](){
 			TcpServer server;
-			assert(server.listen(HostAddress::Any, port));
+			if (!server.listen(HostAddress::Any, port)) {
+				return;
+			}
 			TcpSocket *socket = server.next();
 			WebSocket web_socket(socket);
 			User user(&web_socket);
@@ -41,15 +44,17 @@ public:
 			user.exec();
 		});
 
-		WebSocket socket;
-		socket.open(HostAddress::Local, port);
+		std::thread client_thread([&]() {
+			WebSocket socket;
+			socket.open(HostAddress::Local, port);
 
-		int number = rand();
-		User user(&socket);
-		user.notify(10, number);
-		user.notify(0);
+			User user(&socket);
+			user.notify(10, number);
+			user.notify(0);
+		});
 
 		server_thread.join();
+		client_thread.join();
 		assert(result == number);
 	}
 
