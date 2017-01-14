@@ -49,30 +49,42 @@ namespace UnitTest
 
 			TcpServer server;
 			assert(server.listen(HostAddress::Any, port));
+			WebSocket client;
+			bool client_connected = false;
 
 			std::string request = "I have an apple.";
 			std::string response = "I have a pen.";
-			WebSocket client;
-			bool client_connected = false;
+
+			std::string received_request;
+			std::string received_response;
+
 			std::thread client_thread([&]() {
-				assert(client.open(HostAddress::Local, port));
-				client.write(request);
-
-				std::string received_response = client.read();
-				assert(received_response == response);
+				if (client.open(HostAddress::Local, port)) {
+					client.write(request);
+					received_response = client.read();
+				}
 			});
-			client_thread.detach();
 
-			TcpSocket *tcp_host = server.next();
-			assert(tcp_host != nullptr);
+			std::thread server_thread([&]() {
+				TcpSocket *tcp_host = server.next();
+				if (tcp_host == nullptr) {
+					return;
+				}
 
-			WebSocket host(tcp_host);
-			assert(host.isConnected());
+				WebSocket host(tcp_host);
+				if (!host.isConnected()) {
+					return;
+				}
 
-			std::string received_request = host.read();
+				received_request = host.read();
+				host.write(response);
+			});
+
+			client_thread.join();
+			server_thread.join();
+
 			assert(received_request == request);
-
-			host.write(response);
+			assert(received_response == response);
 
 			server.close();
 			client.close();
