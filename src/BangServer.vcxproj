@@ -160,21 +160,30 @@
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="core\protocol.h" />
+    <ClInclude Include="core\Room.h" />
+    <ClInclude Include="core\Server.h" />
+    <ClInclude Include="core\User.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="network\AbstractSocket.h" />
     <ClInclude Include="network\HostAddress.h" />
     <ClInclude Include="network\TcpServer.h" />
     <ClInclude Include="network\TcpSocket.h" />
     <ClInclude Include="network\WebSocket.h" />
+    <ClInclude Include="util\Json.h" />
     <ClInclude Include="util\util.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="core\Room.cpp" />
+    <ClCompile Include="core\Server.cpp" />
+    <ClCompile Include="core\User.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="network\AbstractSocket.cpp" />
     <ClCompile Include="network\HostAddress.cpp" />
     <ClCompile Include="network\TcpServer.cpp" />
     <ClCompile Include="network\TcpSocket.cpp" />
     <ClCompile Include="network\WebSocket.cpp" />
+    <ClCompile Include="util\Json.cpp" />
     <ClCompile Include="util\util.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

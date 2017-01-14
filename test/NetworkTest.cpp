@@ -16,8 +16,7 @@ namespace UnitTest
 
 		TEST_METHOD(TcpSocketTest)
 		{
-			srand(static_cast<uint>(time(nullptr)));
-			ushort port = static_cast<ushort>(rand());
+			ushort port = static_cast<ushort>(rand(1000, 65535));
 
 			TcpServer server;
 			assert(server.listen(HostAddress::Any, port));
@@ -46,8 +45,7 @@ namespace UnitTest
 
 		TEST_METHOD(WebSocketTest)
 		{
-			srand(static_cast<uint>(time(nullptr)));
-			ushort port = static_cast<ushort>(rand());
+			ushort port = static_cast<ushort>(rand(1000, 65535));
 
 			TcpServer server;
 			assert(server.listen(HostAddress::Any, port));
