@@ -3,7 +3,7 @@
 #include "global.h"
 #include <map>
 
-BA_NAMESPACE_BEGIN
+KA_NAMESPACE_BEGIN
 
 class Json;
 class WebSocket;
@@ -25,4 +25,4 @@ private:
 	BA_DECLARE_PRIVATE
 };
 
-BA_NAMESPACE_END
+KA_NAMESPACE_END

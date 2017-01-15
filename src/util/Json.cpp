@@ -3,7 +3,7 @@
 #include <sstream>
 #include <fstream>
 
-BA_NAMESPACE_BEGIN
+KA_NAMESPACE_BEGIN
 
 Json::Json()
     : m_type(Null)
@@ -448,4 +448,4 @@ void Json::copy(const Json &source)
     }
 }
 
-BA_NAMESPACE_END
+KA_NAMESPACE_END

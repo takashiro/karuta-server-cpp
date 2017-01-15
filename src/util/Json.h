@@ -8,7 +8,7 @@
 #include <vector>
 #include <map>
 
-BA_NAMESPACE_BEGIN
+KA_NAMESPACE_BEGIN
 
 class Json;
 typedef std::vector<Json> JsonArray;
@@ -117,4 +117,4 @@ private:
     Value m_value;
 };
 
-BA_NAMESPACE_END
+KA_NAMESPACE_END

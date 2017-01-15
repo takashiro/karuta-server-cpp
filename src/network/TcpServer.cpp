@@ -3,7 +3,7 @@
 
 #include <WinSock2.h>
 
-BA_NAMESPACE_BEGIN
+KA_NAMESPACE_BEGIN
 
 struct TcpServer::Private
 {
@@ -82,4 +82,4 @@ TcpSocket *TcpServer::next()
 	return socket;
 }
 
-BA_NAMESPACE_END
+KA_NAMESPACE_END

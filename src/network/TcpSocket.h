@@ -5,7 +5,7 @@
 
 #include <string>
 
-BA_NAMESPACE_BEGIN
+KA_NAMESPACE_BEGIN
 
 class TcpSocket : public AbstractSocket
 {
@@ -16,4 +16,4 @@ public:
 	bool open(const HostAddress &ip, ushort port);
 };
 
-BA_NAMESPACE_END
+KA_NAMESPACE_END

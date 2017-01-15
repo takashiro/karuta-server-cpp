@@ -2,7 +2,7 @@
 
 #include "global.h"
 
-BA_NAMESPACE_BEGIN
+KA_NAMESPACE_BEGIN
 
 struct HostAddress
 {
@@ -25,4 +25,4 @@ private:
 
 };
 
-BA_NAMESPACE_END
+KA_NAMESPACE_END

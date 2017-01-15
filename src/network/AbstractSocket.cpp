@@ -5,7 +5,7 @@
 #include <sstream>
 #include <WinSock2.h>
 
-BA_NAMESPACE_BEGIN
+KA_NAMESPACE_BEGIN
 
 struct AbstractSocket::Private
 {
@@ -165,4 +165,4 @@ void *AbstractSocket::nativeSocket() const
 	return static_cast<void *>(&d->socket);
 }
 
-BA_NAMESPACE_END
+KA_NAMESPACE_END

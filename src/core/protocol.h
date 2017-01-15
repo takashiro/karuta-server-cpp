@@ -2,7 +2,7 @@
 
 #include "global.h"
 
-BA_NAMESPACE_BEGIN
+KA_NAMESPACE_BEGIN
 
 namespace net {
 
@@ -20,4 +20,4 @@ enum NetworkCommand
 
 }
 
-BA_NAMESPACE_END
+KA_NAMESPACE_END

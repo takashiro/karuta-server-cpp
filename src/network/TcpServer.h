@@ -2,7 +2,7 @@
 
 #include "HostAddress.h"
 
-BA_NAMESPACE_BEGIN
+KA_NAMESPACE_BEGIN
 
 class TcpSocket;
 
@@ -21,4 +21,4 @@ private:
 	BA_DECLARE_PRIVATE
 };
 
-BA_NAMESPACE_END
+KA_NAMESPACE_END

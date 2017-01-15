@@ -4,7 +4,7 @@
 
 #include <vector>
 
-BA_NAMESPACE_BEGIN
+KA_NAMESPACE_BEGIN
 
 class Room;
 class User;
@@ -28,4 +28,4 @@ private:
 	BA_DECLARE_PRIVATE
 };
 
-BA_NAMESPACE_END
+KA_NAMESPACE_END

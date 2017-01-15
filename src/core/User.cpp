@@ -5,7 +5,7 @@
 #include <sstream>
 #include <map>
 
-BA_NAMESPACE_BEGIN
+KA_NAMESPACE_BEGIN
 
 struct User::Private
 {
@@ -107,4 +107,4 @@ void User::notify(int command, const Json &arguments)
 	d->socket->write(message.str());
 }
 
-BA_NAMESPACE_END
+KA_NAMESPACE_END

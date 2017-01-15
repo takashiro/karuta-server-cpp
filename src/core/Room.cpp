@@ -1,6 +1,6 @@
 #include "Room.h"
 
-BA_NAMESPACE_BEGIN
+KA_NAMESPACE_BEGIN
 
 struct Room::Private
 {
@@ -18,4 +18,4 @@ Room::~Room()
 	delete d;
 }
 
-BA_NAMESPACE_END
+KA_NAMESPACE_END

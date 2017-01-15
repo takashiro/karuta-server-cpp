@@ -4,7 +4,7 @@
 #include <memory.h>
 #include <stdlib.h>
 
-BA_NAMESPACE_BEGIN
+KA_NAMESPACE_BEGIN
 
 static char hextonumber(char ch)
 {
@@ -176,4 +176,4 @@ std::string sha1(const std::string &str)
 	return sha1(str.data(), str.size());
 }
 
-BA_NAMESPACE_END
+KA_NAMESPACE_END

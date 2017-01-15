@@ -2,7 +2,7 @@
 #include "TcpSocket.h"
 #include "util/util.h"
 
-BA_NAMESPACE_BEGIN
+KA_NAMESPACE_BEGIN
 
 #define strnicmp _strnicmp
 #define stricmp _stricmp
@@ -299,4 +299,4 @@ bool WebSocket::isConnected() const
 	return d->socket != nullptr;
 }
 
-BA_NAMESPACE_END
+KA_NAMESPACE_END

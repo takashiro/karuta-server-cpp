@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BangServer", "src\BangServer.vcxproj", "{49E4BEA2-F9EE-430C-AC8C-32A12ED23687}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "karuta-server", "src\karuta-server.vcxproj", "{49E4BEA2-F9EE-430C-AC8C-32A12ED23687}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTest", "test\UnitTest.vcxproj", "{DD01E76F-E0D8-42CE-89AD-599EFB6105A3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unit-test", "test\unit-test.vcxproj", "{DD01E76F-E0D8-42CE-89AD-599EFB6105A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

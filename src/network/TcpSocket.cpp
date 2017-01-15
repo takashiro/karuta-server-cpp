@@ -2,7 +2,7 @@
 
 #include <WinSock2.h>
 
-BA_NAMESPACE_BEGIN
+KA_NAMESPACE_BEGIN
 
 TcpSocket::TcpSocket()
 {
@@ -28,4 +28,4 @@ bool TcpSocket::open(const HostAddress &ip, ushort port)
 	return true;
 }
 
-BA_NAMESPACE_END
+KA_NAMESPACE_END
