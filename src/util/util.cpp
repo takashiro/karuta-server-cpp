@@ -6,11 +6,6 @@
 
 KA_NAMESPACE_BEGIN
 
-static char hextonumber(char ch)
-{
-	return '0' <= ch && ch <= '9' ? ch - '0' : 'A' <= ch && ch <= 'F' ? ch - 'A' + 10 : 0;
-}
-
 std::string base64_encode(const uchar *data, uint64 length)
 {
 	const char *index_table = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
