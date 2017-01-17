@@ -2,10 +2,17 @@
 #include "TcpSocket.h"
 #include "util/util.h"
 
+#include <string.h>
+
 KA_NAMESPACE_BEGIN
 
+#ifdef KA_OS_WIN
 #define strnicmp _strnicmp
 #define stricmp _stricmp
+#elif defined(KA_OS_LINUX)
+#define strnicmp strncasecmp
+#define stricmp strcasecmp
+#endif
 
 struct WebSocket::Private
 {

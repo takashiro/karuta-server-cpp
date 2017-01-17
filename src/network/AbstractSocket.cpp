@@ -1,9 +1,16 @@
-#pragma once
-
 #include "AbstractSocket.h"
 
 #include <sstream>
+#include <string.h>
+
+#ifdef KA_OS_WIN
 #include <WinSock2.h>
+#elif defined(KA_OS_LINUX)
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+typedef int SOCKET;
+#endif
 
 KA_NAMESPACE_BEGIN
 
@@ -34,7 +41,11 @@ AbstractSocket::~AbstractSocket()
 
 void AbstractSocket::close()
 {
+#ifdef KA_OS_WIN
 	closesocket(d->socket);
+#elif defined(KA_OS_LINUX)
+	::close(d->socket);
+#endif
 }
 
 bool AbstractSocket::waitForRead(int mseconds) const
@@ -77,11 +88,11 @@ std::string AbstractSocket::read(uint64 size)
 
 uint64 AbstractSocket::readLine(char *buffer, uint64 size)
 {
-	int endl = 0;
+	uint64 endl = 0;
 
 	if (d->available() > 0) {
 		d->buffer.getline(buffer, size);
-		endl = static_cast<int>(d->buffer.gcount());
+		endl = d->buffer.gcount();
 
 		uint64 str_length = strlen(buffer);
 		if (endl > str_length) {
@@ -95,16 +106,16 @@ uint64 AbstractSocket::readLine(char *buffer, uint64 size)
 	}
 
 	while (endl < size) {
-		int received = recv(d->socket, buffer + endl, static_cast<int>(size - endl), 0);
+		uint64 received = recv(d->socket, buffer + endl, static_cast<int>(size - endl), 0);
 		if (received <= 0) {
-			int errcode = WSAGetLastError();
+			//int errcode = WSAGetLastError();
 			return 0;
 		}
 
 		received += endl;
 		for (; endl < received; endl++) {
 			if (buffer[endl] == '\n') {
-				int new_offset = endl + 1;
+				uint64 new_offset = endl + 1;
 				buffer[endl] = '\0';
 				if (endl > 0 && buffer[endl - 1] == '\r') {
 					endl--;
@@ -141,7 +152,7 @@ uint64 AbstractSocket::write(const char *data, uint64 size)
 	uint64 sent = 0;
 	while (sent < size) {
 		int result = ::send(d->socket, data, static_cast<int>(size - sent), 0);
-		if (result == SOCKET_ERROR) {
+		if (result == -1) {
 			break;
 		}
 		sent += result;

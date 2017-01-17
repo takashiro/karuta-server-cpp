@@ -1,7 +1,17 @@
 #include "TcpServer.h"
 #include "TcpSocket.h"
 
+#ifdef KA_OS_WIN
 #include <WinSock2.h>
+#elif defined(KA_OS_LINUX)
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <unistd.h>
+
+#define SOCKET int
+#define INVALID_SOCKET (~0)
+#define SOCKET_ERROR -1
+#endif
 
 KA_NAMESPACE_BEGIN
 
@@ -55,13 +65,17 @@ bool TcpServer::listen(const HostAddress &ip, ushort port)
 
 void TcpServer::close()
 {
+#ifdef KA_OS_WIN
 	closesocket(d->socket);
+#elif defined KA_OS_LINUX
+	::close(d->socket);
+#endif
 }
 
 TcpSocket *TcpServer::next()
 {
 	sockaddr_in client_addr;
-	int len = sizeof(client_addr);
+	uint len = sizeof(client_addr);
 
 	SOCKET native_socket = accept(d->socket, reinterpret_cast<sockaddr *>(&client_addr), &len);
 	if (native_socket == INVALID_SOCKET) {

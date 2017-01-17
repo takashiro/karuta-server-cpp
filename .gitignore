@@ -5,3 +5,5 @@
 *.opendb
 *.vcxproj.user
 *.db
+/*.depend
+/*.layout

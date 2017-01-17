@@ -12,6 +12,15 @@
 
 #define BA_DECLARE_PRIVATE struct Private; friend struct Private; Private *d;
 
+//Operating System Macros
+#if defined(_WIN32) || defined(_WIN64)
+#define KA_OS_WIN
+#elif defined(__linux__)
+#define KA_OS_LINUX
+#else
+#error "Unsupported OS"
+#endif
+
 KA_NAMESPACE_BEGIN
 
 typedef unsigned char uchar;
