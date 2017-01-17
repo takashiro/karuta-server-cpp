@@ -31,15 +31,8 @@ TcpServer::~TcpServer()
 
 bool TcpServer::listen(const HostAddress &ip, ushort port)
 {
-	WSADATA wsaData;
-	WORD sockVersion = MAKEWORD(2, 0);
-	if (WSAStartup(sockVersion, &wsaData)) {
-		return false;
-	}
-
 	d->socket = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (d->socket == INVALID_SOCKET) {
-		WSACleanup();
 		return false;
 	}
 
@@ -48,12 +41,10 @@ bool TcpServer::listen(const HostAddress &ip, ushort port)
 	addr_sev.sin_port = htons(port);
 	addr_sev.sin_addr.s_addr = static_cast<uint32>(ip);
 	if (SOCKET_ERROR == ::bind(d->socket, reinterpret_cast<sockaddr *>(&addr_sev), sizeof(addr_sev))) {
-		WSACleanup();
 		return false;
 	}
 
 	if (SOCKET_ERROR == ::listen(d->socket, d->maxClientNum)) {
-		WSACleanup();
 		return false;
 	}
 
