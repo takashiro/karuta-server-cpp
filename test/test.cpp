@@ -1,6 +1,9 @@
 #include "test.h"
 
 #include <time.h>
+
+#ifdef KA_OS_WIN
+
 #include <WinSock2.h>
 
 namespace
@@ -32,3 +35,16 @@ namespace UnitTest
 	}
 
 }
+
+#elif defined(KA_OS_LINUX)
+
+int main()
+{
+	srand(static_cast<uint>(time(nullptr)));
+
+
+
+	return 0;
+}
+
+#endif
