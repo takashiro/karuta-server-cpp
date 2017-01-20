@@ -18,7 +18,7 @@ public:
 	TcpSocket *next();
 
 private:
-	BA_DECLARE_PRIVATE
+	KA_DECLARE_PRIVATE
 };
 
 KA_NAMESPACE_END

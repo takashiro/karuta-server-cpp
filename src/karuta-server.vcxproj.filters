@@ -32,9 +32,11 @@
     <ClCompile Include="util\Json.cpp">
       <Filter>util</Filter>
     </ClCompile>
+    <ClCompile Include="core\Packet.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="global.h" />
     <ClInclude Include="network\HostAddress.h">
       <Filter>network</Filter>
     </ClInclude>
@@ -67,6 +69,10 @@
     </ClInclude>
     <ClInclude Include="util\Json.h">
       <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="global.h" />
+    <ClInclude Include="core\Packet.h">
+      <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

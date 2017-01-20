@@ -24,7 +24,7 @@ public:
 	bool isConnected() const;
 
 private:
-	BA_DECLARE_PRIVATE
+	KA_DECLARE_PRIVATE
 };
 
 KA_NAMESPACE_END

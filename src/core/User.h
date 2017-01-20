@@ -21,8 +21,11 @@ public:
 	void notify(int command);
 	void notify(int command, const Json &arguments);
 
+	Json request(int command, const Json &arguments, int timeout = 0);
+	void reply(int command, const Json &arguments);
+
 private:
-	BA_DECLARE_PRIVATE
+	KA_DECLARE_PRIVATE
 };
 
 KA_NAMESPACE_END

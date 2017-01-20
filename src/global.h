@@ -10,7 +10,7 @@
 #define BA_USING_NAMESPACE
 #endif // KA_NAMESPACE
 
-#define BA_DECLARE_PRIVATE struct Private; friend struct Private; Private *d;
+#define KA_DECLARE_PRIVATE struct Private; friend struct Private; Private *d;
 
 //Operating System Macros
 #if defined(_WIN32) || defined(_WIN64)

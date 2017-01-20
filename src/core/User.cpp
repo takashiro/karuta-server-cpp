@@ -1,8 +1,8 @@
 #include "User.h"
+#include "Packet.h"
 #include "util/Json.h"
 #include "network/WebSocket.h"
 
-#include <sstream>
 #include <map>
 
 KA_NAMESPACE_BEGIN
@@ -37,24 +37,16 @@ struct User::Private
 			}
 
 			std::stringstream ss(message);
-			int command = ss.get();
-			if (command <= 0) {
-				break;
-			} else if (command == 127) {
-				char cmd[4];
-				ss.read(cmd, 4);
-				command = *(reinterpret_cast<int *>(cmd));
-			}
+			Packet packet;
+			ss >> packet;
 
 			if (d->actions == nullptr) {
 				break;
 			}
-			auto i = d->actions->find(command);
+			auto i = d->actions->find(packet.command);
 			if (i != d->actions->end()) {
 				User::Action behavior = i->second;
-				Json arguments;
-				ss >> arguments;
-				behavior(user, arguments);
+				behavior(user, packet.arguments);
 			}
 		}
 	}
@@ -84,26 +76,32 @@ void User::exec()
 
 void User::notify(int command)
 {
-	Json null;
-	notify(command, null);
+	std::stringstream message;
+	message << Packet(command);
+	d->socket->write(message.str());
 }
 
 void User::notify(int command, const Json &arguments)
 {
 	std::stringstream message;
-	if (command < 127) {
-		char ch = static_cast<char>(command);
-		message.write(&ch, 1);
-	} else {
-		char ch[5];
-		ch[0] = 127;
-		const char *command_bits = reinterpret_cast<const char *>(&command);
-		for (int i = 1; i <= 4; i++) {
-			ch[i] = command_bits[i - 1];
-		}
-		message.write(ch, 5);
-	}
-	message << arguments;
+	message << Packet(command, arguments);
+	d->socket->write(message.str());
+}
+
+Json User::request(int command, const Json &arguments, int timeout)
+{
+	Packet packet(command, arguments);
+	packet.timeout = timeout;
+	std::stringstream message;
+	message << packet;
+	d->socket->write(message.str());
+	return Json();
+}
+
+void User::reply(int command, const Json &arguments)
+{
+	std::stringstream message;
+	message << Packet(command, arguments);
 	d->socket->write(message.str());
 }
 
