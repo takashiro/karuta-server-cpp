@@ -47,8 +47,7 @@ public:
 
 		std::thread server_thread([&](){
 			TcpSocket *socket = server.next();
-			WebSocket *websocket = new WebSocket(socket);
-			User user(websocket);
+			User user(new WebSocket(socket));
 			user.setAction(&actions);
 			user.exec();
 		});
@@ -70,6 +69,53 @@ public:
 		client_thread.join();
 		assert(result1 == number1);
 		assert(result2 == number2);
+	}
+
+	TEST_METHOD(UserRequestTest)
+	{
+		ushort port = static_cast<ushort>(rand(1000, 0xFFFF));
+		int number = rand();
+		Json reply1, reply2;
+
+		TcpServer server;
+		assert(server.listen(HostAddress::Any, port));
+
+		std::thread server_thread([&]() {
+			TcpSocket *socket = server.next();
+			User user(new WebSocket(socket));
+			std::thread listener([&]() {
+				user.exec();
+			});
+			reply1 = user.request(1010, number, 5);
+			reply2 = user.request(1011, number, 1);
+			user.disconnect();
+			listener.join();
+		});
+
+		std::map<int, User::Action> actions;
+		actions[1010] = [](User *user, const Json &arguments) {
+			if (arguments.isNumber()) {
+				int number = arguments.toInt();
+				user->reply(1010, number);
+			}
+		};
+
+		std::thread client_thread([&]() {
+			WebSocket *socket = new WebSocket;
+			if (!socket->open(HostAddress::Local, port)) {
+				delete socket;
+				return;
+			}
+			User user(socket);
+			user.setAction(&actions);
+			user.exec();
+		});
+
+		server_thread.join();
+		client_thread.join();
+
+		assert(reply1.isNumber() && reply1.toInt() == number);
+		assert(reply2.isNull());
 	}
 
 };

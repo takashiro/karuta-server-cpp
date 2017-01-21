@@ -35,6 +35,9 @@
     <ClCompile Include="core\Packet.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="util\Semaphore.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="network\HostAddress.h">
@@ -73,6 +76,9 @@
     <ClInclude Include="global.h" />
     <ClInclude Include="core\Packet.h">
       <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="util\Semaphore.h">
+      <Filter>util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

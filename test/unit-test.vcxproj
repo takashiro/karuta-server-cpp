@@ -109,7 +109,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>$(SolutionDir)obj\$(Platform)\$(Configuration);$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Packet.obj;User.obj;Server.obj;Room.obj;Json.obj;util.obj;AbstractSocket.obj;TcpSocket.obj;TcpServer.obj;HostAddress.obj;WebSocket.obj;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Semaphore.obj;Packet.obj;User.obj;Server.obj;Room.obj;Json.obj;util.obj;AbstractSocket.obj;TcpSocket.obj;TcpServer.obj;HostAddress.obj;WebSocket.obj;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -124,7 +124,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>$(SolutionDir)obj\$(Platform)\$(Configuration);$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Packet.obj;User.obj;Server.obj;Room.obj;Json.obj;util.obj;AbstractSocket.obj;TcpSocket.obj;TcpServer.obj;HostAddress.obj;WebSocket.obj;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Semaphore.obj;Packet.obj;User.obj;Server.obj;Room.obj;Json.obj;util.obj;AbstractSocket.obj;TcpSocket.obj;TcpServer.obj;HostAddress.obj;WebSocket.obj;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -143,7 +143,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)obj\$(Platform)\$(Configuration);$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Packet.obj;User.obj;Server.obj;Room.obj;Json.obj;util.obj;AbstractSocket.obj;TcpSocket.obj;TcpServer.obj;HostAddress.obj;WebSocket.obj;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Semaphore.obj;Packet.obj;User.obj;Server.obj;Room.obj;Json.obj;util.obj;AbstractSocket.obj;TcpSocket.obj;TcpServer.obj;HostAddress.obj;WebSocket.obj;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -162,7 +162,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)obj\$(Platform)\$(Configuration);$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Packet.obj;User.obj;Server.obj;Room.obj;Json.obj;util.obj;AbstractSocket.obj;TcpSocket.obj;TcpServer.obj;HostAddress.obj;WebSocket.obj;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Semaphore.obj;Packet.obj;User.obj;Server.obj;Room.obj;Json.obj;util.obj;AbstractSocket.obj;TcpSocket.obj;TcpServer.obj;HostAddress.obj;WebSocket.obj;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

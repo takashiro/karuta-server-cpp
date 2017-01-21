@@ -172,6 +172,7 @@
     <ClInclude Include="network\TcpSocket.h" />
     <ClInclude Include="network\WebSocket.h" />
     <ClInclude Include="util\Json.h" />
+    <ClInclude Include="util\Semaphore.h" />
     <ClInclude Include="util\util.h" />
   </ItemGroup>
   <ItemGroup>
@@ -186,6 +187,7 @@
     <ClCompile Include="network\TcpSocket.cpp" />
     <ClCompile Include="network\WebSocket.cpp" />
     <ClCompile Include="util\Json.cpp" />
+    <ClCompile Include="util\Semaphore.cpp" />
     <ClCompile Include="util\util.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -26,5 +26,17 @@ namespace UnitTest
 			assert(out.timeout == timeout);
 		}
 
+		TEST_METHOD(InvalidPacketTest)
+		{
+			char message[6] = {'\0', '\0', 'n', 'u', 'l', 'l'};
+			std::stringstream ss;
+			ss.write(message, 6);
+			Packet packet;
+			ss >> packet;
+			assert(packet.command == 0);
+			assert(packet.timeout == 0);
+			assert(packet.arguments.isNull());
+		}
+
 	};
 }

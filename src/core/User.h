@@ -18,6 +18,8 @@ public:
 	void setAction(const std::map<int, Action> *handlers);
 	void exec();
 
+	void disconnect();
+
 	void notify(int command);
 	void notify(int command, const Json &arguments);
 

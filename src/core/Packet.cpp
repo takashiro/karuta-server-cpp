@@ -24,8 +24,8 @@ namespace
 	int readint(std::istream &in)
 	{
 		int value = in.get();
-		if (value <= 0) {
-			return -1;
+		if (value < 0) {
+			return 0;
 		} else if (value == 127) {
 			char cmd[4];
 			in.read(cmd, 4);

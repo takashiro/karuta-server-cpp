@@ -1,6 +1,7 @@
 #include "User.h"
 #include "Packet.h"
 #include "util/Json.h"
+#include "util/Semaphore.h"
 #include "network/WebSocket.h"
 
 #include <map>
@@ -10,12 +11,16 @@ KA_NAMESPACE_BEGIN
 struct User::Private
 {
 	WebSocket *socket;
-
 	const std::map<int, User::Action> *actions;
+
+	int replyCommand;
+	Semaphore replySem;
+	Json reply;
 
 	Private()
 		: socket(nullptr)
 		, actions(nullptr)
+		, replySem(0)
 	{
 	}
 
@@ -39,6 +44,16 @@ struct User::Private
 			std::stringstream ss(message);
 			Packet packet;
 			ss >> packet;
+			if (packet.command == 0) {
+				d->socket->close();
+				break;
+			}
+
+			if (d->replyCommand > 0 && d->replyCommand == packet.command) {
+				d->reply = std::move(packet.arguments);
+				d->replySem.release();
+				continue;
+			}
 
 			if (d->actions == nullptr) {
 				break;
@@ -74,6 +89,12 @@ void User::exec()
 	Private::Listener(this);
 }
 
+void User::disconnect()
+{
+	notify(0, 1);
+	d->socket->close();
+}
+
 void User::notify(int command)
 {
 	std::stringstream message;
@@ -94,8 +115,19 @@ Json User::request(int command, const Json &arguments, int timeout)
 	packet.timeout = timeout;
 	std::stringstream message;
 	message << packet;
+	d->replyCommand = command;
 	d->socket->write(message.str());
-	return Json();
+
+	if (timeout > 0) {
+		if (d->replySem.acquire(1, timeout)) {
+			return d->reply;
+		} else {
+			return Json();
+		}
+	} else {
+		d->replySem.acquire();
+		return d->reply;
+	}
 }
 
 void User::reply(int command, const Json &arguments)

@@ -14,6 +14,34 @@ namespace UnitTest
 	{
 	public:
 
+		TEST_METHOD(TcpSocketDisconnectTest)
+		{
+			ushort port = static_cast<ushort>(rand(100, 0xFFFF));
+			int received = -1;
+
+			TcpServer server;
+			assert(server.listen(HostAddress::Any, port));
+
+			std::thread server_thread([&]() {
+				TcpSocket *socket = server.next();
+				if (socket) {
+					char buffer[2];
+					received = socket->read(buffer, 2);
+				}
+			});
+
+			std::thread client_thread([&]() {
+				TcpSocket client;
+				assert(client.open(HostAddress::Local, port));
+				std::this_thread::sleep_for(std::chrono::seconds(1));
+				client.close();
+			});
+
+			server_thread.join();
+			client_thread.join();
+			assert(received == 0);
+		}
+
 		TEST_METHOD(TcpSocketTest)
 		{
 			ushort port = static_cast<ushort>(rand(1000, 65535));
@@ -41,6 +69,34 @@ namespace UnitTest
 
 			client.close();
 			server.close();
+		}
+
+		TEST_METHOD(WebSocketDisconnectTest)
+		{
+			ushort port = static_cast<ushort>(rand(100, 0xFFFF));
+			std::string received = "test";
+
+			TcpServer server;
+			assert(server.listen(HostAddress::Any, port));
+
+			std::thread server_thread([&]() {
+				TcpSocket *socket = server.next();
+				if (socket) {
+					WebSocket websocket(socket);
+					received = websocket.read();
+				}
+			});
+
+			std::thread client_thread([&]() {
+				TcpSocket client;
+				assert(client.open(HostAddress::Local, port));
+				std::this_thread::sleep_for(std::chrono::seconds(1));
+				client.close();
+			});
+
+			server_thread.join();
+			client_thread.join();
+			assert(received.empty());
 		}
 
 		TEST_METHOD(WebSocketTest)
