@@ -36,6 +36,16 @@ struct User::Private
 		}
 	}
 
+	bool executeRequest()
+	{
+		if (requestTimeout > 0) {
+			return replySem.acquire(1, requestTimeout);
+		} else {
+			replySem.acquire();
+			return true;
+		}
+	}
+
 	static void Listener(User *user)
 	{
 		User::Private *d = user->d;
@@ -183,24 +193,21 @@ bool User::executeRequest(const std::function<void(const Json &)> &callback)
 {
 	d->replyCallback = callback;
 	d->socket->write(d->requestMessage);
-	if (d->requestTimeout > 0) {
-		return d->replySem.acquire(1, d->requestTimeout);
-	} else {
-		d->replySem.acquire();
-		return true;
-	}
+	return d->executeRequest();
 }
 
 bool User::executeRequest(std::function<void(const Json &)> &&callback)
 {
 	d->replyCallback = std::move(callback);
 	d->socket->write(d->requestMessage);
-	if (d->requestTimeout > 0) {
-		return d->replySem.acquire(1, d->requestTimeout);
-	} else {
-		d->replySem.acquire();
-		return true;
-	}
+	return d->executeRequest();
+}
+
+bool User::executeRequest()
+{
+	d->replyCallback = nullptr;
+	d->socket->write(d->requestMessage);
+	return d->executeRequest();
 }
 
 Json User::getReply() const

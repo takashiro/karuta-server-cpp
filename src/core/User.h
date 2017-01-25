@@ -36,6 +36,7 @@ public:
 	void prepareRequest(int command, const Json &arguments, int timeout = 0);
 	bool executeRequest(const std::function<void(const Json &)> &callback);
 	bool executeRequest(std::function<void(const Json &)> &&callback);
+	bool executeRequest();
 	Json getReply() const;
 
 private:

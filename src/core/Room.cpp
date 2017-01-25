@@ -62,6 +62,27 @@ void Room::broadcastNotification(int command, const Json &arguments)
 	}
 }
 
+void Room::broadcastRequest(int command, const Json &arguments, int timeout)
+{
+	for (User *user : d->users) {
+		user->prepareRequest(command, arguments, timeout);
+	}
+
+	broadcastRequest(d->users, timeout);
+}
+
+void Room::broadcastRequest(int timeout)
+{
+	broadcastRequest(d->users, timeout);
+}
+
+void Room::broadcastRequest(const std::vector<User *> &users, int timeout)
+{
+	for (User *user : users) {
+		user->executeRequest();
+	}
+}
+
 User *Room::broadcastRacingRequest(int command, const Json &arguments, int timeout)
 {
 	for (User *user : d->users) {
