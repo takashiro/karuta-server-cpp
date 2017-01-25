@@ -17,6 +17,10 @@ struct User::Private
 	Semaphore replySem;
 	Json reply;
 
+	int requestTimeout;
+	std::string requestMessage;
+	std::function<void(const Json &)> replyCallback;
+
 	Private()
 		: socket(nullptr)
 		, actions(nullptr)
@@ -52,6 +56,9 @@ struct User::Private
 			if (d->replyCommand > 0 && d->replyCommand == packet.command) {
 				d->reply = std::move(packet.arguments);
 				d->replySem.release();
+				if (d->replyCallback) {
+					d->replyCallback(d->reply);
+				}
 				continue;
 			}
 
@@ -67,6 +74,11 @@ struct User::Private
 	}
 };
 
+User::User()
+	: d(new Private)
+{
+}
+
 User::User(WebSocket *socket)
 	: d(new Private)
 {
@@ -77,6 +89,22 @@ User::User(WebSocket *socket)
 User::~User()
 {
 	delete d;
+}
+
+bool User::connect(const HostAddress &ip, ushort port)
+{
+	if (d->socket) {
+		return false;
+	}
+
+	WebSocket *socket = new WebSocket;
+	if (socket->open(ip, port)) {
+		d->socket = socket;
+		return true;
+	} else {
+		delete socket;
+		return false;
+	}
 }
 
 void User::setAction(const std::map<int, User::Action> *behaviors)
@@ -135,6 +163,49 @@ void User::reply(int command, const Json &arguments)
 	std::stringstream message;
 	message << Packet(command, arguments);
 	d->socket->write(message.str());
+}
+
+void User::prepareRequest(int command, const Json &arguments, int timeout)
+{
+	Packet packet;
+	packet.command = command;
+	packet.arguments = arguments;
+	packet.timeout = timeout;
+
+	std::stringstream ss;
+	ss << packet;
+	d->requestMessage = ss.str();
+	d->requestTimeout = timeout;
+	d->replyCommand = command;
+}
+
+bool User::executeRequest(const std::function<void(const Json &)> &callback)
+{
+	d->replyCallback = callback;
+	d->socket->write(d->requestMessage);
+	if (d->requestTimeout > 0) {
+		return d->replySem.acquire(1, d->requestTimeout);
+	} else {
+		d->replySem.acquire();
+		return true;
+	}
+}
+
+bool User::executeRequest(std::function<void(const Json &)> &&callback)
+{
+	d->replyCallback = std::move(callback);
+	d->socket->write(d->requestMessage);
+	if (d->requestTimeout > 0) {
+		return d->replySem.acquire(1, d->requestTimeout);
+	} else {
+		d->replySem.acquire();
+		return true;
+	}
+}
+
+Json User::getReply() const
+{
+	return d->reply;
 }
 
 KA_NAMESPACE_END

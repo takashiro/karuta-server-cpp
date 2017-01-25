@@ -43,8 +43,11 @@ bool Semaphore::acquire(int num, int seconds)
 				return true;
 			}
 		}
+		return false;
+	} else {
+		d->count -= num;
+		return true;
 	}
-	return false;
 }
 
 void Semaphore::release(int num)

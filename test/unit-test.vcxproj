@@ -168,6 +168,7 @@
   <ItemGroup>
     <ClCompile Include="NetworkTest.cpp" />
     <ClCompile Include="PacketTest.cpp" />
+    <ClCompile Include="RoomTest.cpp" />
     <ClCompile Include="ServerTest.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="UserTest.cpp" />
