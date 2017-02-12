@@ -7,6 +7,7 @@
 #include <vector>
 #include <thread>
 #include <mutex>
+#include <memory>
 
 KA_NAMESPACE_BEGIN
 
@@ -14,12 +15,9 @@ struct Room::Private
 {
 	uint id;
 	std::vector<User *> users;
-	bool racingRequestProceeding;
-	std::mutex racingRequesMutex;
 
 	Private()
 		: id(0)
-		, racingRequestProceeding(false)
 	{
 	}
 };
@@ -99,37 +97,39 @@ User *Room::broadcastRacingRequest(int timeout)
 
 User *Room::broadcastRacingRequest(const std::vector<User *> &users, int timeout)
 {
+	std::shared_ptr<bool> requesting = std::make_shared<bool>(true);
+	std::shared_ptr<std::mutex> requestMutex = std::make_shared<std::mutex>();
+
 	User *winner = nullptr;
 	Semaphore replied;
 
-	d->racingRequestProceeding = true;
 	for (User *user : d->users) {
-		user->executeRequest([&](const Json &) {
-			if (d->racingRequesMutex.try_lock()) {
-				if (d->racingRequestProceeding && winner == nullptr) {
+		user->executeRequest([requestMutex,requesting,user,&winner,&replied](const Json &) {
+			if (requestMutex->try_lock()) {
+				if (*requesting && winner == nullptr) {
 					winner = user;
 					replied.release();
 				}
-				d->racingRequesMutex.unlock();
+				requestMutex->unlock();
 			}
 		});
 	}
 
 	if (timeout > 0) {
 		if (replied.acquire(1, timeout)) {
-			std::unique_lock<std::mutex> lock(d->racingRequesMutex);
-			d->racingRequestProceeding = false;
+			std::unique_lock<std::mutex> lock(*requestMutex);
+			*requesting = false;
 			return winner;
 		}
 	} else {
 		replied.acquire();
-		std::unique_lock<std::mutex> lock(d->racingRequesMutex);
-		d->racingRequestProceeding = false;
+		std::unique_lock<std::mutex> lock(*requestMutex);
+		requesting = false;
 		return winner;
 	}
 
-	std::unique_lock<std::mutex> lock(d->racingRequesMutex);
-	d->racingRequestProceeding = false;
+	std::unique_lock<std::mutex> lock(*requestMutex);
+	*requesting = false;
 	return nullptr;
 }
 
