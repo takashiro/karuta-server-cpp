@@ -38,12 +38,17 @@ namespace UnitTest
 
 #elif defined(KA_OS_LINUX)
 
+std::vector<void(*)()> UnitTests;
+
 int main()
 {
 	srand(static_cast<uint>(time(nullptr)));
 
+	for (void(*func)() : UnitTests) {
+		(*func)();
+	}
 
-
+	puts("Unit tests done!");
 	return 0;
 }
 

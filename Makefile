@@ -13,8 +13,8 @@ INCLUDEPATH = $(SOURCEDIR)
 
 SOURCES = $(foreach dir,$(SOURCEDIR),$(wildcard $(dir)/*.cpp))
 
-CPPFLAGS = -std=c++11 -fexceptions
-LFLAGS =
+CPPFLAGS = -std=c++11 -fexceptions -pthread
+LFLAGS = -lpthread
 
 BINDIR = bin
 OBJDIR = obj
@@ -31,7 +31,8 @@ CCPARAM = $(CPPFLAGS) $(addprefix -I,$(INCLUDEPATH))
 $(BINDIR)/$(TARGET): $(OBJECTS) | $(BINDIR)
 	$(CXX) -o $(BINDIR)/$(TARGET) $(wildcard $(OBJDIR)/*.o) $(LFLAGS)
 
-$(OBJECTS): $(addsuffix .cpp,$(basename $(notdir $@))) | $(OBJDIR)
+.SECONDEXPANSION:
+$(OBJECTS): $$(addsuffix .cpp,$$(basename $$(notdir $$@))) | $(OBJDIR)
 	$(CXX) -o $@ -c $(filter %/$(addsuffix .cpp,$(basename $(notdir $@))),$(SOURCES)) $(CCPARAM)
 
 $(BINDIR):
@@ -47,15 +48,23 @@ clean:
 # Build Unit Test #
 
 TESTUNITS = $(wildcard test/*.cpp)
-
+TESTPREPS = $(addprefix $(OBJDIR)/unittest/prep/, $(addsuffix .cpp, $(basename $(notdir $(TESTUNITS)))))
 TESTOBJECTS = $(addprefix $(OBJDIR)/unittest/, $(addsuffix .o, $(basename $(notdir $(TESTUNITS)))))
 
-test: $(OBJECTS) $(TESTOBJECTS) | $(BINDIR)
-	$(CXX) -o $(BINDIR)/unittest $(filter-out %main.o, $(wildcard $(OBJDIR)/*.o)) $(wildcard $(OBJDIR)/unittest/*.o) $(LFLAGS)
-	./bin/unittest
+test: $(BINDIR)/unittest
+	./$(BINDIR)/unittest
 
-$(TESTOBJECTS): $(addprefix test/, $(addsuffix .cpp, $(basename $(notdir $@)))) | $(OBJDIR)/unittest
-	$(CXX) -o $@ -c $(addprefix test/, $(addsuffix .cpp, $(basename $(notdir $@)))) $(CCPARAM) -Itest
+$(BINDIR)/unittest: $(OBJECTS) $(TESTOBJECTS) | $(BINDIR)
+	$(CXX) -o $(BINDIR)/unittest $(filter-out %main.o, $(wildcard $(OBJDIR)/*.o)) $(wildcard $(OBJDIR)/unittest/*.o) $(LFLAGS)
+
+$(TESTOBJECTS): $$(addprefix $(OBJDIR)/unittest/prep/, $$(addsuffix .cpp, $$(basename $$(notdir $$@))))
+	$(CXX) -o $@ -c $(addprefix $(OBJDIR)/unittest/prep/, $(addsuffix .cpp, $(basename $(notdir $@)))) $(CCPARAM) -Itest
+
+$(TESTPREPS): $$(addprefix test/, $$(addsuffix .cpp, $$(basename $$(notdir $$@)))) $(OBJDIR)/unittest/prep
+	./test/prep.sh test/$(notdir $@) $(OBJDIR)/unittest/prep
 
 $(OBJDIR)/unittest:
 	mkdir $(OBJDIR)/unittest
+
+$(OBJDIR)/unittest/prep: $(OBJDIR)/unittest
+	mkdir $(OBJDIR)/unittest/prep

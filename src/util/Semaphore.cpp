@@ -1,6 +1,7 @@
 #include "Semaphore.h"
 
 #include <mutex>
+#include <condition_variable>
 
 KA_NAMESPACE_BEGIN
 

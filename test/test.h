@@ -15,11 +15,13 @@ KA_USING_NAMESPACE
 #elif defined(KA_OS_LINUX)
 
 #include <assert.h>
+#include <string>
+#include <vector>
 #include <iostream>
 
 #define alert(message) std::cerr << message << std::endl
 
-#define TEST_CLASS(classname) class classname; class classname
+#define TEST_CLASS(classname) class classname
 
 #define TEST_METHOD(methodname) void methodname()
 
@@ -29,3 +31,5 @@ inline int rand(int min, int max)
 {
 	return min + rand() % (max - min);
 }
+
+extern std::vector<void(*)()> UnitTests;
