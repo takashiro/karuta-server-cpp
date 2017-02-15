@@ -1,0 +1,8 @@
+language: cpp
+dist: trusty
+compiler:
+  - gcc
+before_script:
+  - chmod +x test/prep.sh
+script:
+  - make && make test
