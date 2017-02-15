@@ -1,23 +1,22 @@
 #!/bin/bash
 
 file=$1
-output=$2/$(basename $file)
-cp -f $file $output
+cat $file
 
-classname=$(cat $file | grep "TEST_CLASS" | sed 's/TEST_CLASS(\(.*\))/\1/g')
+classname=$(cat $file | grep "TEST_CLASS" | sed 's/TEST_CLASS(\(.*\))/\1/g' | awk '{$1=$1};1' | tr -d '\r\n')
 if [ -n "$classname" ]; then
-    echo "namespace { void unittest(){" >> $output
-    echo "UnitTest::$classname test;" >> $output
+    echo "namespace { static void unittest(){"
+    echo "UnitTest::$classname test;"
 
     methods=$(cat $file | grep "TEST_METHOD" | sed 's/TEST_METHOD(\(.*\))/\1/g')
     if [ -n "$methods" ]; then
         for method in $methods; do
-            method=$(echo $method | tr -d '\n')
-            #echo "std::cout << \"$method...\" << std::endl;" >> $output
-            echo "test.$method();" >> $output
+            method=$(echo $method | awk '{$1=$1};1' | tr -d '\r\n')
+            echo "std::cout << \"$method...\" << std::endl;"
+            echo "test.$method();"
         done
     fi
 
-    echo "}" >> $output
-    echo " struct Init { Init() {UnitTests.push_back(unittest);} }; Init init; }" >> $output
+    echo "}"
+    echo " struct Init { Init() { AddUnitTest(\"$classname\", unittest); } }; Init init; }"
 fi

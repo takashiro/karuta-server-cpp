@@ -36,10 +36,10 @@ $(OBJECTS): $$(addsuffix .cpp,$$(basename $$(notdir $$@))) | $(OBJDIR)
 	$(CXX) -o $@ -c $(filter %/$(addsuffix .cpp,$(basename $(notdir $@))),$(SOURCES)) $(CCPARAM)
 
 $(BINDIR):
-	mkdir $(BINDIR)
+	mkdir -p $(BINDIR)
 
 $(OBJDIR):
-	mkdir $(OBJDIR)
+	mkdir -p $(OBJDIR)
 
 clean:
 	rm -rf $(OBJDIR)
@@ -61,10 +61,10 @@ $(TESTOBJECTS): $$(addprefix $(OBJDIR)/unittest/prep/, $$(addsuffix .cpp, $$(bas
 	$(CXX) -o $@ -c $(addprefix $(OBJDIR)/unittest/prep/, $(addsuffix .cpp, $(basename $(notdir $@)))) $(CCPARAM) -Itest
 
 $(TESTPREPS): $$(addprefix test/, $$(addsuffix .cpp, $$(basename $$(notdir $$@)))) $(OBJDIR)/unittest/prep
-	./test/prep.sh test/$(notdir $@) $(OBJDIR)/unittest/prep
+	./test/prep.sh test/$(notdir $@) > $@
 
 $(OBJDIR)/unittest:
-	mkdir $(OBJDIR)/unittest
+	mkdir -p $(OBJDIR)/unittest
 
-$(OBJDIR)/unittest/prep: $(OBJDIR)/unittest
-	mkdir $(OBJDIR)/unittest/prep
+$(OBJDIR)/unittest/prep:
+	mkdir -p $(OBJDIR)/unittest/prep
