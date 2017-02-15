@@ -21,25 +21,35 @@ OBJDIR = obj
 
 # Build Target #
 
-OBJECTS = $(addprefix $(OBJDIR)/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))))
+DEBUGOBJECTS = $(addprefix $(OBJDIR)/debug/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))))
+RELEASEOBJECTS = $(addprefix $(OBJDIR)/release/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))))
 
 vpath %.cpp $(INCLUDEPATH)
 vpath %.h $(INCLUDEPATH)
 
 CCPARAM = $(CPPFLAGS) $(addprefix -I,$(INCLUDEPATH))
 
-$(BINDIR)/$(TARGET): $(OBJECTS) | $(BINDIR)
-	$(CXX) -o $(BINDIR)/$(TARGET) $(wildcard $(OBJDIR)/*.o) $(LFLAGS)
+$(BINDIR)/$(TARGET): $(RELEASEOBJECTS) | $(BINDIR)
+	$(CXX) -o $(BINDIR)/$(TARGET) $(wildcard $(OBJDIR)/release/*.o) $(LFLAGS)
 
 .SECONDEXPANSION:
-$(OBJECTS): $$(addsuffix .cpp,$$(basename $$(notdir $$@))) | $(OBJDIR)
-	$(CXX) -o $@ -c $(filter %/$(addsuffix .cpp,$(basename $(notdir $@))),$(SOURCES)) $(CCPARAM)
+$(DEBUGOBJECTS): $$(addsuffix .cpp,$$(basename $$(notdir $$@))) | $(OBJDIR)/debug
+	$(CXX) -o $@ -c $(filter %/$(addsuffix .cpp,$(basename $(notdir $@))),$(SOURCES)) $(CCPARAM) -g
+
+$(RELEASEOBJECTS): $$(addsuffix .cpp,$$(basename $$(notdir $$@))) | $(OBJDIR)/release
+	$(CXX) -o $@ -c $(filter %/$(addsuffix .cpp,$(basename $(notdir $@))),$(SOURCES)) $(CCPARAM) -g
 
 $(BINDIR):
 	mkdir -p $(BINDIR)
 
 $(OBJDIR):
 	mkdir -p $(OBJDIR)
+
+$(OBJDIR)/debug:
+	mkdir -p $(OBJDIR)/debug
+
+$(OBJDIR)/release:
+	mkdir -p $(OBJDIR)/release
 
 clean:
 	rm -rf $(OBJDIR)
@@ -54,11 +64,11 @@ TESTOBJECTS = $(addprefix $(OBJDIR)/unittest/, $(addsuffix .o, $(basename $(notd
 test: $(BINDIR)/unittest
 	./$(BINDIR)/unittest
 
-$(BINDIR)/unittest: $(OBJECTS) $(TESTOBJECTS) | $(BINDIR)
-	$(CXX) -o $(BINDIR)/unittest $(filter-out %main.o, $(wildcard $(OBJDIR)/*.o)) $(wildcard $(OBJDIR)/unittest/*.o) $(LFLAGS)
+$(BINDIR)/unittest: $(DEBUGOBJECTS) $(TESTOBJECTS) | $(BINDIR)
+	$(CXX) -o $(BINDIR)/unittest $(filter-out %main.o, $(DEBUGOBJECTS)) $(TESTOBJECTS) $(LFLAGS)
 
 $(TESTOBJECTS): $$(addprefix $(OBJDIR)/unittest/prep/, $$(addsuffix .cpp, $$(basename $$(notdir $$@))))
-	$(CXX) -o $@ -c $(addprefix $(OBJDIR)/unittest/prep/, $(addsuffix .cpp, $(basename $(notdir $@)))) $(CCPARAM) -Itest
+	$(CXX) -o $@ -c $(addprefix $(OBJDIR)/unittest/prep/, $(addsuffix .cpp, $(basename $(notdir $@)))) $(CCPARAM) -g -Itest
 
 $(TESTPREPS): $$(addprefix test/, $$(addsuffix .cpp, $$(basename $$(notdir $$@)))) $(OBJDIR)/unittest/prep
 	./test/prep.sh test/$(notdir $@) > $@
