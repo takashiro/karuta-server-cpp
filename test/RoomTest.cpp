@@ -46,7 +46,7 @@ namespace UnitTest
 				for (int i = 0; i < 5; i++) {
 					User *user = server.next();
 					room.addUser(user);
-					std::thread thread([&]() {
+					std::thread thread([=]() {
 						user->exec();
 					});
 					listeners.push_back(std::move(thread));
