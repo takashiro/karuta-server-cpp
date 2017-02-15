@@ -7,7 +7,7 @@
 #else
 #define KA_NAMESPACE_BEGIN
 #define KA_NAMESPACE_END
-#define BA_USING_NAMESPACE
+#define KA_USING_NAMESPACE
 #endif // KA_NAMESPACE
 
 #define KA_DECLARE_PRIVATE struct Private; friend struct Private; Private *d;
