@@ -48,7 +48,7 @@ static void TestAction2(User *user, const Json &arguments)
 	}
 }
 
-TEST_CLASS(ServerUser)
+TEST_CLASS(UserUnit)
 {
 public:
 

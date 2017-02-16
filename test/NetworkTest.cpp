@@ -30,7 +30,7 @@ takashiro@qq.com
 
 namespace UnitTest
 {
-	TEST_CLASS(Network)
+	TEST_CLASS(NetworkUnit)
 	{
 	public:
 

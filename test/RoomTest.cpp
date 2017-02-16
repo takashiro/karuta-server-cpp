@@ -29,7 +29,7 @@ takashiro@qq.com
 
 namespace UnitTest
 {
-	TEST_CLASS(RoomTest)
+	TEST_CLASS(RoomUnit)
 	{
 	public:
 

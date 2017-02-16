@@ -39,7 +39,7 @@ namespace
 
 namespace UnitTest
 {
-	TEST_CLASS(ServerTest)
+	TEST_CLASS(ServerUnit)
 	{
 	public:
 

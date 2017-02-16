@@ -23,10 +23,10 @@ takashiro@qq.com
 
 namespace UnitTest
 {
-	TEST_CLASS(PacketTest)
+	TEST_CLASS(PacketUnit)
 	{
 	public:
-		
+
 		TEST_METHOD(PacketIOTest)
 		{
 			int command = rand(0, 0x7FFFFFFF);
