@@ -95,7 +95,11 @@ void TcpServer::close()
 TcpSocket *TcpServer::next()
 {
 	sockaddr_in client_addr;
-	uint len = sizeof(client_addr);
+#if defined(KA_OS_LINUX)
+	socklen_t len = static_cast<socklen_t>(sizeof(client_addr));
+#elif defined(KA_OS_WIN)
+	int len = static_cast<int>(sizeof(client_addr));
+#endif
 
 	SOCKET native_socket = accept(d->socket, reinterpret_cast<sockaddr *>(&client_addr), &len);
 	if (native_socket == INVALID_SOCKET) {
