@@ -44,6 +44,9 @@ struct AbstractSocket::Private
 	int available()
 	{
 		int offset = static_cast<int>(buffer.tellg());
+		if (offset == -1) {
+			return -1;
+		}
 		buffer.seekg(0, std::ios::end);
 		int end = static_cast<int>(buffer.tellg());
 		buffer.seekg(offset, std::ios::beg);
@@ -128,6 +131,9 @@ uint64 AbstractSocket::readLine(char *buffer, uint64 size)
 				str_length--;
 			}
 			return str_length;
+		} else {
+			d->buffer.str(std::string());
+			d->buffer.clear();
 		}
 	}
 
