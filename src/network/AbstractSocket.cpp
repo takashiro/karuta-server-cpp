@@ -25,11 +25,13 @@ takashiro@qq.com
 
 #ifdef KA_OS_WIN
 #include <WinSock2.h>
+typedef int socksize_t;
 #elif defined(KA_OS_LINUX)
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 typedef int SOCKET;
+typedef ssize_t socksize_t;
 #endif
 
 KA_NAMESPACE_BEGIN
@@ -82,11 +84,15 @@ bool AbstractSocket::waitForRead(int mseconds) const
 uint64 AbstractSocket::read(char *buffer, uint64 size)
 {
 	if (d->available() <= 0) {
-		return recv(d->socket, buffer, static_cast<int>(size), MSG_WAITALL);
+		socksize_t result = recv(d->socket, buffer, static_cast<int>(size), MSG_WAITALL);
+		return result <= 0 ? 0 : result;
 	} else {
 		uint64 read = d->buffer.readsome(buffer, size);
 		if (read < size) {
-			read += recv(d->socket, buffer + read, static_cast<int>(size - read), MSG_WAITALL);
+			socksize_t result = recv(d->socket, buffer + read, static_cast<int>(size - read), MSG_WAITALL);
+			if (result > 0) {
+				read += result;
+			}
 		}
 		return size;
 	}
@@ -126,11 +132,13 @@ uint64 AbstractSocket::readLine(char *buffer, uint64 size)
 	}
 
 	while (endl < size) {
-		uint64 received = recv(d->socket, buffer + endl, static_cast<int>(size - endl), 0);
-		if (received <= 0) {
+		uint64 received = 0;
+		socksize_t result = recv(d->socket, buffer + endl, static_cast<int>(size - endl), 0);
+		if (result <= 0) {
 			//int errcode = WSAGetLastError();
 			return 0;
 		}
+		received = result;
 
 		received += endl;
 		for (; endl < received; endl++) {
