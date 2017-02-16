@@ -3,11 +3,12 @@
 	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="karuta-server" />
+		<Option makefile_is_custom="1" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="bin/Debug/karuta-server" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/debug/karuta-server" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -15,9 +16,17 @@
 					<Add option="-std=c++11" />
 					<Add option="-g" />
 				</Compiler>
+				<MakeCommands>
+					<Build command="$make -f $makefile DEBUG=1" />
+					<CompileFile command="$make -f $makefile $file DEBUG=1" />
+					<Clean command="$make -f $makefile clean DEBUG=1" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="$make -q -f $makefile $target DEBUG=1" />
+					<SilentBuild command="$make -f $makefile DEBUG=1 &gt; $(CMD_NULL)" />
+				</MakeCommands>
 			</Target>
 			<Target title="Release">
-				<Option output="bin/Release/karuta-server" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/release/karuta-server" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -28,6 +37,42 @@
 				<Linker>
 					<Add option="-s" />
 				</Linker>
+				<MakeCommands>
+					<Build command="$make -f $makefile" />
+					<CompileFile command="$make -f $makefile $file" />
+					<Clean command="$make -f $makefile clean" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="$make -q -f $makefile $target" />
+					<SilentBuild command="$make -f $makefile &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+			<Target title="Unit Test (Debug)">
+				<Option output="bin/debug/unittest" prefix_auto="1" extension_auto="1" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
+				<MakeCommands>
+					<Build command="$make -f $makefile bin/debug/unittest DEBUG=1" />
+					<CompileFile command="$make -f $makefile $file DEBUG=1" />
+					<Clean command="$make -f $makefile clean DEBUG=1" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="$make -q -f $makefile $target DEBUG=1" />
+					<SilentBuild command="$make -f $makefile bin/debug/unittest DEBUG=1 &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+			<Target title="Unit Test (Release)">
+				<Option output="bin/debug/unittest" prefix_auto="1" extension_auto="1" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
+				<MakeCommands>
+					<Build command="$make -f $makefile bin/release/unittest" />
+					<CompileFile command="$make -f $makefile $file" />
+					<Clean command="$make -f $makefile clean" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="$make -q -f $makefile $target" />
+					<SilentBuild command="$make -f $makefile bin/release/unittest &gt; $(CMD_NULL)" />
+				</MakeCommands>
 			</Target>
 		</Build>
 		<Compiler>
@@ -37,32 +82,134 @@
 			<Add option="-Isrc/" />
 			<Add option="-DKA_NAMESPACE=karuta" />
 		</Compiler>
-		<Unit filename="src/core/Room.cpp" />
-		<Unit filename="src/core/Room.h" />
-		<Unit filename="src/core/Server.cpp" />
-		<Unit filename="src/core/Server.h" />
-		<Unit filename="src/core/User.cpp" />
-		<Unit filename="src/core/User.h" />
-		<Unit filename="src/core/protocol.h" />
-		<Unit filename="src/global.h" />
-		<Unit filename="src/main.cpp" />
-		<Unit filename="src/network/AbstractSocket.cpp" />
-		<Unit filename="src/network/AbstractSocket.h" />
-		<Unit filename="src/network/HostAddress.cpp" />
-		<Unit filename="src/network/HostAddress.h" />
-		<Unit filename="src/network/TcpServer.cpp" />
-		<Unit filename="src/network/TcpServer.h" />
-		<Unit filename="src/network/TcpSocket.cpp" />
-		<Unit filename="src/network/TcpSocket.h" />
-		<Unit filename="src/network/WebSocket.cpp" />
-		<Unit filename="src/network/WebSocket.h" />
-		<Unit filename="src/util/Json.cpp" />
-		<Unit filename="src/util/Json.h" />
-		<Unit filename="src/util/util.cpp" />
-		<Unit filename="src/util/util.h" />
+		<Unit filename="src/core/Room.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/core/Room.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/core/Server.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/core/Server.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/core/User.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/core/User.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/core/protocol.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/global.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/main.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/network/AbstractSocket.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/network/AbstractSocket.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/network/HostAddress.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/network/HostAddress.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/network/TcpServer.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/network/TcpServer.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/network/TcpSocket.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/network/TcpSocket.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/network/WebSocket.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/network/WebSocket.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/util/Json.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/util/Json.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/util/util.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/util/util.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="test/JsonTest.cpp">
+			<Option target="Unit Test (Debug)" />
+			<Option target="Unit Test (Release)" />
+		</Unit>
+		<Unit filename="test/NetworkTest.cpp">
+			<Option target="Unit Test (Debug)" />
+			<Option target="Unit Test (Release)" />
+		</Unit>
+		<Unit filename="test/PacketTest.cpp">
+			<Option target="Unit Test (Debug)" />
+			<Option target="Unit Test (Release)" />
+		</Unit>
+		<Unit filename="test/RoomTest.cpp">
+			<Option target="Unit Test (Debug)" />
+			<Option target="Unit Test (Release)" />
+		</Unit>
+		<Unit filename="test/ServerTest.cpp">
+			<Option target="Unit Test (Debug)" />
+			<Option target="Unit Test (Release)" />
+		</Unit>
+		<Unit filename="test/UserTest.cpp">
+			<Option target="Unit Test (Debug)" />
+			<Option target="Unit Test (Release)" />
+		</Unit>
+		<Unit filename="test/test.cpp">
+			<Option target="Unit Test (Debug)" />
+			<Option target="Unit Test (Release)" />
+		</Unit>
+		<Unit filename="test/test.h">
+			<Option target="Unit Test (Debug)" />
+			<Option target="Unit Test (Release)" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<debugger />
+			<envvars />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

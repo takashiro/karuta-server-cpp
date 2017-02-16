@@ -18,63 +18,66 @@ LFLAGS = -lpthread
 
 BINDIR = bin
 OBJDIR = obj
+BUILDCONFIG = release
+
+DEBUG ?= 0
+ifeq ($(DEBUG), 1)
+	CPPFLAGS += -g
+	BUILDCONFIG = debug
+endif
 
 # Build Target #
 
-DEBUGOBJECTS = $(addprefix $(OBJDIR)/debug/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))))
-RELEASEOBJECTS = $(addprefix $(OBJDIR)/release/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))))
+OBJECTS = $(addprefix $(OBJDIR)/$(BUILDCONFIG)/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))))
 
 vpath %.cpp $(INCLUDEPATH)
 vpath %.h $(INCLUDEPATH)
 
 CCPARAM = $(CPPFLAGS) $(addprefix -I,$(INCLUDEPATH))
 
-$(BINDIR)/$(TARGET): $(RELEASEOBJECTS) | $(BINDIR)
-	$(CXX) -o $(BINDIR)/$(TARGET) $(wildcard $(OBJDIR)/release/*.o) $(LFLAGS)
+$(BINDIR)/$(BUILDCONFIG)/$(TARGET): $(OBJECTS) | $(BINDIR)/$(BUILDCONFIG)
+	$(CXX) -o $(BINDIR)/$(BUILDCONFIG)/$(TARGET) $(wildcard $(OBJDIR)/$(BUILDCONFIG)/*.o) $(LFLAGS)
 
 .SECONDEXPANSION:
-$(DEBUGOBJECTS): $$(addsuffix .cpp,$$(basename $$(notdir $$@))) | $(OBJDIR)/debug
-	$(CXX) -o $@ -c $(filter %/$(addsuffix .cpp,$(basename $(notdir $@))),$(SOURCES)) $(CCPARAM) -g
-
-$(RELEASEOBJECTS): $$(addsuffix .cpp,$$(basename $$(notdir $$@))) | $(OBJDIR)/release
-	$(CXX) -o $@ -c $(filter %/$(addsuffix .cpp,$(basename $(notdir $@))),$(SOURCES)) $(CCPARAM) -g
+$(OBJECTS): $$(addsuffix .cpp,$$(basename $$(notdir $$@))) | $(OBJDIR)/$(BUILDCONFIG)
+	$(CXX) -o $@ -c $(filter %/$(addsuffix .cpp,$(basename $(notdir $@))),$(SOURCES)) $(CCPARAM)
 
 $(BINDIR):
 	mkdir -p $(BINDIR)
 
+$(BINDIR)/$(BUILDCONFIG):
+	mkdir -p $(BINDIR)/$(BUILDCONFIG)
+
 $(OBJDIR):
 	mkdir -p $(OBJDIR)
 
-$(OBJDIR)/debug:
-	mkdir -p $(OBJDIR)/debug
-
-$(OBJDIR)/release:
-	mkdir -p $(OBJDIR)/release
+$(OBJDIR)/$(BUILDCONFIG):
+	mkdir -p $(OBJDIR)/$(BUILDCONFIG)
 
 clean:
-	rm -rf $(OBJDIR)
-	rm -rf $(BINDIR)
+	rm -rf $(OBJDIR)/$(BUILDCONFIG)
+	rm -rf $(BINDIR)/$(BUILDCONFIG)
 
 # Build Unit Test #
 
 TESTUNITS = $(wildcard test/*.cpp)
-TESTPREPS = $(addprefix $(OBJDIR)/unittest/prep/, $(addsuffix .cpp, $(basename $(notdir $(TESTUNITS)))))
-TESTOBJECTS = $(addprefix $(OBJDIR)/unittest/, $(addsuffix .o, $(basename $(notdir $(TESTUNITS)))))
+TESTPREPS = $(addprefix $(OBJDIR)/prep/unittest/, $(addsuffix .cpp, $(basename $(notdir $(TESTUNITS)))))
+TESTOBJECTS = $(addprefix $(OBJDIR)/$(BUILDCONFIG)/unittest/, $(addsuffix .o, $(basename $(notdir $(TESTUNITS)))))
 
-test: $(BINDIR)/unittest
-	./$(BINDIR)/unittest
+test: $(BINDIR)/$(BUILDCONFIG)/unittest
+	./$(BINDIR)/$(BUILDCONFIG)/unittest
 
-$(BINDIR)/unittest: $(DEBUGOBJECTS) $(TESTOBJECTS) | $(BINDIR)
-	$(CXX) -o $(BINDIR)/unittest $(filter-out %main.o, $(DEBUGOBJECTS)) $(TESTOBJECTS) $(LFLAGS)
+$(BINDIR)/$(BUILDCONFIG)/unittest: $(OBJECTS) $(TESTOBJECTS) | $(BINDIR)/$(BUILDCONFIG)
+	$(CXX) -o $(BINDIR)/$(BUILDCONFIG)/unittest $(filter-out %main.o, $(OBJECTS)) $(TESTOBJECTS) $(LFLAGS)
 
-$(TESTOBJECTS): $$(addprefix $(OBJDIR)/unittest/prep/, $$(addsuffix .cpp, $$(basename $$(notdir $$@))))
-	$(CXX) -o $@ -c $(addprefix $(OBJDIR)/unittest/prep/, $(addsuffix .cpp, $(basename $(notdir $@)))) $(CCPARAM) -g -Itest
+$(TESTOBJECTS): $$(addprefix $(OBJDIR)/prep/unittest/, $$(addsuffix .cpp, $$(basename $$(notdir $$@)))) | $(OBJDIR)/$(BUILDCONFIG)/unittest
+	$(CXX) -o $@ -c $(addprefix $(OBJDIR)/prep/unittest/, $(addsuffix .cpp, $(basename $(notdir $@)))) $(CCPARAM) -Itest
 
-$(TESTPREPS): $$(addprefix test/, $$(addsuffix .cpp, $$(basename $$(notdir $$@)))) $(OBJDIR)/unittest/prep
+$(TESTPREPS): $$(addprefix test/, $$(addsuffix .cpp, $$(basename $$(notdir $$@)))) $(OBJDIR)/prep/unittest
 	./test/prep.sh test/$(notdir $@) > $@
 
-$(OBJDIR)/unittest:
-	mkdir -p $(OBJDIR)/unittest
+$(OBJDIR)/$(BUILDCONFIG)/unittest:
+	mkdir -p $(OBJDIR)/$(BUILDCONFIG)/unittest
 
-$(OBJDIR)/unittest/prep:
-	mkdir -p $(OBJDIR)/unittest/prep
+$(OBJDIR)/prep/unittest:
+	mkdir -p $(OBJDIR)/prep/unittest

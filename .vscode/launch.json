@@ -2,10 +2,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Unit Test Launch",
+            "name": "Unit Test (Debug)",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/bin/unittest",
+            "program": "${workspaceRoot}/bin/debug/unittest",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}",
@@ -36,11 +36,15 @@
             }
         },
         {
-            "name": "Unit Test Attach",
+            "name": "Unit Test (Release)",
             "type": "cppdbg",
-            "request": "attach",
-            "program": "${workspaceRoot}/bin/unittest",
-            "processId": "${command.pickProcess}",
+            "request": "launch",
+            "program": "${workspaceRoot}/bin/release/unittest",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceRoot}",
+            "environment": [],
+            "externalConsole": true,
             "linux": {
                 "MIMode": "gdb",
                 "setupCommands": [
