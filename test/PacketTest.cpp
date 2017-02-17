@@ -19,6 +19,9 @@ takashiro@qq.com
 ************************************************************************/
 
 #include "test.h"
+
+#include <sstream>
+
 #include <core/Packet.h>
 
 namespace UnitTest

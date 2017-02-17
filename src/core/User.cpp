@@ -25,6 +25,7 @@ takashiro@qq.com
 #include "network/WebSocket.h"
 
 #include <map>
+#include <sstream>
 
 KA_NAMESPACE_BEGIN
 
@@ -63,43 +64,6 @@ struct User::Private
 		} else {
 			replySem.acquire();
 			return true;
-		}
-	}
-
-	static void Listener(User *user)
-	{
-		User::Private *d = user->d;
-		for (;;) {
-			std::string message = d->socket->read();
-			if (message.empty()) {
-				break;
-			}
-
-			std::stringstream ss(message);
-			Packet packet;
-			ss >> packet;
-			if (packet.command == 0) {
-				d->socket->close();
-				break;
-			}
-
-			if (d->replyCommand > 0 && d->replyCommand == packet.command) {
-				d->reply = std::move(packet.arguments);
-				d->replySem.release();
-				if (d->replyCallback) {
-					d->replyCallback(d->reply);
-				}
-				continue;
-			}
-
-			if (d->actions == nullptr) {
-				break;
-			}
-			auto i = d->actions->find(packet.command);
-			if (i != d->actions->end()) {
-				User::Action behavior = i->second;
-				behavior(user, packet.arguments);
-			}
 		}
 	}
 };
@@ -144,7 +108,38 @@ void User::setAction(const std::map<int, User::Action> *behaviors)
 
 void User::exec()
 {
-	Private::Listener(this);
+	for (;;) {
+		std::string message = d->socket->read();
+		if (message.empty()) {
+			break;
+		}
+
+		std::stringstream ss(message);
+		Packet packet;
+		ss >> packet;
+		if (packet.command == 0) {
+			d->socket->close();
+			break;
+		}
+
+		if (d->replyCommand > 0 && d->replyCommand == packet.command) {
+			d->reply = std::move(packet.arguments);
+			d->replySem.release();
+			if (d->replyCallback) {
+				d->replyCallback(d->reply);
+			}
+			continue;
+		}
+
+		if (d->actions == nullptr) {
+			break;
+		}
+		auto i = d->actions->find(packet.command);
+		if (i != d->actions->end()) {
+			User::Action behavior = i->second;
+			behavior(this, packet.arguments);
+		}
+	}
 }
 
 void User::disconnect()

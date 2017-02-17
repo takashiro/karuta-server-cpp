@@ -22,8 +22,6 @@ takashiro@qq.com
 
 #include "util/Json.h"
 
-#include <sstream>
-
 KA_NAMESPACE_BEGIN
 
 class Json;
