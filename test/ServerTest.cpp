@@ -31,7 +31,7 @@ namespace
 {
 	int result = 0;
 
-	void SetNumber(User *user, const Json &arg)
+	void SetNumber(User *, const Json &arg)
 	{
 		result = arg.toInt();
 	}

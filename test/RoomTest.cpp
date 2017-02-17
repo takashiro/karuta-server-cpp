@@ -128,7 +128,7 @@ namespace UnitTest
 				}
 
 				const std::vector<User *> &users = room.users();
-				room.broadcastRequest(users, 5);
+				room.broadcastRequest(users);
 				for (int i = 0; i < 5; i++) {
 					User *user = users[i];
 					Json reply = user->getReply();

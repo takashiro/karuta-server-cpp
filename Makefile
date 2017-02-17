@@ -13,7 +13,7 @@ INCLUDEPATH = $(SOURCEDIR)
 
 SOURCES = $(foreach dir,$(SOURCEDIR),$(wildcard $(dir)/*.cpp))
 
-CPPFLAGS = -std=c++11 -fexceptions -pthread
+CPPFLAGS = -std=c++11 -fexceptions -pthread -Wall
 LFLAGS = -lpthread
 
 BINDIR = bin

@@ -107,7 +107,7 @@ std::string AbstractSocket::read(uint64 size)
 	uint64 len = read(buffer, size);
 
 	std::string message;
-	if (len >= 0) {
+	if (len > 0) {
 		message.append(buffer, len);
 	}
 

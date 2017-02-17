@@ -42,8 +42,8 @@ public:
 	void broadcastNotification(int command, const Json &arguments);
 
 	void broadcastRequest(int command, const Json &arguments, int timeout = 0);
-	void broadcastRequest(int timeout = 0);
-	void broadcastRequest(const std::vector<User *> &users, int timeout = 0);
+	void broadcastRequest();
+	void broadcastRequest(const std::vector<User *> &users);
 
 	User *broadcastRacingRequest(int command, const Json &arguments, int timeout = 0);
 	User *broadcastRacingRequest(int timeout = 0);

@@ -126,7 +126,6 @@ namespace UnitTest
 			TcpServer server;
 			assert(server.listen(HostAddress::Any, port));
 			WebSocket client;
-			bool client_connected = false;
 
 			std::string request = "I have an apple.";
 			std::string response = "I have a pen.";

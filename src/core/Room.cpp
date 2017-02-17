@@ -86,15 +86,15 @@ void Room::broadcastRequest(int command, const Json &arguments, int timeout)
 		user->prepareRequest(command, arguments, timeout);
 	}
 
-	broadcastRequest(d->users, timeout);
+	broadcastRequest(d->users);
 }
 
-void Room::broadcastRequest(int timeout)
+void Room::broadcastRequest()
 {
-	broadcastRequest(d->users, timeout);
+	broadcastRequest(d->users);
 }
 
-void Room::broadcastRequest(const std::vector<User *> &users, int timeout)
+void Room::broadcastRequest(const std::vector<User *> &users)
 {
 	for (User *user : users) {
 		user->executeRequest();
@@ -123,7 +123,7 @@ User *Room::broadcastRacingRequest(const std::vector<User *> &users, int timeout
 	User *winner = nullptr;
 	Semaphore replied;
 
-	for (User *user : d->users) {
+	for (User *user : users) {
 		user->executeRequest([requestMutex,requesting,user,&winner,&replied](const Json &) {
 			if (requestMutex->try_lock()) {
 				if (*requesting && winner == nullptr) {
