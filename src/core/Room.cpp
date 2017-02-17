@@ -21,8 +21,8 @@ takashiro@qq.com
 #include "Room.h"
 #include "User.h"
 
-#include "util/Json.h"
-#include "util/Semaphore.h"
+#include "Json.h"
+#include "Semaphore.h"
 
 #include <vector>
 #include <thread>

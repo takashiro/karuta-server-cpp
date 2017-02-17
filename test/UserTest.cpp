@@ -24,11 +24,11 @@ takashiro@qq.com
 #include <thread>
 #include <mutex>
 
-#include <core/User.h>
-#include <util/Json.h>
+#include <User.h>
+#include <Json.h>
 
-#include <network/TcpServer.h>
-#include <network/WebSocket.h>
+#include <TcpServer.h>
+#include <WebSocket.h>
 
 namespace UnitTest {
 

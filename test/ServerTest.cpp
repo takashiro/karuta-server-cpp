@@ -22,10 +22,10 @@ takashiro@qq.com
 
 #include <thread>
 
-#include <core/Server.h>
-#include <core/User.h>
-#include <util/Json.h>
-#include <network/WebSocket.h>
+#include <Server.h>
+#include <User.h>
+#include <Json.h>
+#include <WebSocket.h>
 
 namespace
 {

@@ -24,9 +24,9 @@ takashiro@qq.com
 #include <thread>
 #include <mutex>
 
-#include <network/TcpServer.h>
-#include <network/TcpSocket.h>
-#include <network/WebSocket.h>
+#include <TcpServer.h>
+#include <TcpSocket.h>
+#include <WebSocket.h>
 
 namespace UnitTest
 {

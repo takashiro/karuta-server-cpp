@@ -20,7 +20,7 @@ takashiro@qq.com
 
 #include "WebSocket.h"
 #include "TcpSocket.h"
-#include "util/util.h"
+#include "util.h"
 
 #include <string.h>
 

@@ -22,8 +22,8 @@ takashiro@qq.com
 #include "Room.h"
 #include "User.h"
 
-#include "network/TcpServer.h"
-#include "network/WebSocket.h"
+#include "TcpServer.h"
+#include "WebSocket.h"
 
 #include <map>
 

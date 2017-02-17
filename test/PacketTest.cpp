@@ -22,7 +22,7 @@ takashiro@qq.com
 
 #include <sstream>
 
-#include <core/Packet.h>
+#include <Packet.h>
 
 namespace UnitTest
 {

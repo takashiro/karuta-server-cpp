@@ -20,7 +20,7 @@ takashiro@qq.com
 
 #pragma once
 
-#include "network/HostAddress.h"
+#include "HostAddress.h"
 
 #include <vector>
 

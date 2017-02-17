@@ -20,9 +20,9 @@ takashiro@qq.com
 
 #include "User.h"
 #include "Packet.h"
-#include "util/Json.h"
-#include "util/Semaphore.h"
-#include "network/WebSocket.h"
+#include "Json.h"
+#include "Semaphore.h"
+#include "WebSocket.h"
 
 #include <map>
 #include <sstream>
