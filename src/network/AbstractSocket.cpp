@@ -123,14 +123,13 @@ uint64 AbstractSocket::readLine(char *buffer, uint64 size)
 		d->buffer.getline(buffer, size);
 		endl = d->buffer.gcount();
 
-		uint64 str_length = strlen(buffer);
-		if (endl > str_length) {
-			uint64 last = str_length - 1;
+		if (!d->buffer.eof()) {
+			uint64 last = endl - 1;
 			if (buffer[last] == '\r') {
 				buffer[last] = '\0';
-				str_length--;
+				endl--;
 			}
-			return str_length;
+			return endl;
 		} else {
 			d->buffer.str(std::string());
 			d->buffer.clear();
