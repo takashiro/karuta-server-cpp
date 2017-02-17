@@ -312,8 +312,9 @@ bool json_try_read(std::istream &in, const char *str)
 
 std::istream &operator>>(std::istream &in, Json &value)
 {
-	if (value.type() != Json::Null)
-		return in;
+	if (value.type() != Json::Null) {
+		value.release();
+	}
 
 	if (json_try_read(in, "null")) {
 		value.m_type = Json::Null;

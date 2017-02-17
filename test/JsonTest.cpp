@@ -64,6 +64,17 @@ public:
 		assert(number == out.toInt());
 	}
 
+	TEST_METHOD(StringTest)
+	{
+		std::stringstream ss;
+		ss << "\"\\\"So much bluuuuuue!!!\\\", Yunzhe Fang surprised.\"";
+		Json json;
+		ss >> json;
+		assert(json.isString());
+		std::string str = json.toString();
+		assert(str == "\"So much bluuuuuue!!!\", Yunzhe Fang surprised.");
+	}
+
 };
 
 }
