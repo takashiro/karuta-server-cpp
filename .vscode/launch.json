@@ -1,11 +1,12 @@
 {
     "version": "0.2.0",
     "configurations": [
+
         {
-            "name": "Unit Test (Debug)",
+            "name": "Debug",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/bin/debug/unittest",
+            "program": "${workspaceRoot}/bin/debug/karuta-server",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}",
@@ -35,11 +36,12 @@
                 ]
             }
         },
+
         {
-            "name": "Unit Test (Release)",
+            "name": "Unit Test (Debug)",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/bin/release/unittest",
+            "program": "${workspaceRoot}/bin/debug/unittest",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}",

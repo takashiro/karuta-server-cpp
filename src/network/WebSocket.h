@@ -39,7 +39,7 @@ public:
 	void close();
 
 	std::string read();
-	bool write(const std::string &message, bool masked = true);
+	bool write(const std::string &message, bool binary = true, bool masked = true);
 
 	bool isConnected() const;
 

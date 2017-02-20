@@ -68,6 +68,7 @@ WebSocket::WebSocket()
 WebSocket::WebSocket(TcpSocket *socket)
 	: d(new Private)
 {
+	bool upgraded = false;
 	std::string sec_key;
 	char line[255];
 	uint64 length;
@@ -96,23 +97,29 @@ WebSocket::WebSocket(TcpSocket *socket)
 		} else if (strnicmp(line, "Connection:", 11) == 0) {
 			const char *value = Private::readValue(line + 11);
 
-			if (strnicmp(value, "Upgrade", 7) != 0) {
+			if (strstr(value, "Upgrade") == nullptr) {
 				socket->close();
 				return;
+			} else {
+				upgraded = true;
 			}
 		}
+	}
+
+	if (!upgraded) {
+		return;
 	}
 
 	if (!sec_key.empty()) {
 		sec_key.append("258EAFA5-E914-47DA-95CA-C5AB0DC85B11");
 		std::string key_accept = base64_encode(sha1(sec_key));
 
-		socket->write("HTTP/1.1 101 Switching Protocols\n");
-		socket->write("Upgrade: websocket\n");
-		socket->write("Connection: Upgrade\n");
+		socket->write("HTTP/1.1 101 Switching Protocols\r\n");
+		socket->write("Upgrade: websocket\r\n");
+		socket->write("Connection: Upgrade\r\n");
 		socket->write("Sec-WebSocket-Accept: ");
 		socket->write(key_accept);
-		socket->write("\n\n");
+		socket->write("\r\n\r\n");
 
 		d->socket = socket;
 	} else {
@@ -204,6 +211,8 @@ bool WebSocket::open(const HostAddress &ip, ushort port)
 void WebSocket::close()
 {
 	if (d->socket) {
+		char header[2] = {'\x88', '\0'};
+		d->socket->write(header, 2);
 		d->socket->close();
 	}
 }
@@ -273,9 +282,19 @@ std::string WebSocket::read()
 	return message;
 }
 
-bool WebSocket::write(const std::string &message, bool masked)
+bool WebSocket::write(const std::string &message, bool binary, bool masked)
 {
-	char header[10] = {'\x81', '\0'};
+	if (d->socket == nullptr) {
+		return false;
+	}
+
+	char header[10] = {'\x80', '\0'};
+	if (binary) {
+		header[0] |= '\x2';
+	}else{
+		header[1] |= '\x1';
+	}
+
 	int header_length = 2;
 	size_t length = message.length();
 	if (length < 126) {

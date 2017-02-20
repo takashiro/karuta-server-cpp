@@ -101,9 +101,9 @@ bool User::connect(const HostAddress &ip, ushort port)
 	}
 }
 
-void User::setAction(const std::map<int, User::Action> *behaviors)
+void User::setAction(const std::map<int, User::Action> *actions)
 {
-	d->actions = behaviors;
+	d->actions = actions;
 }
 
 void User::exec()

@@ -25,31 +25,38 @@ KA_NAMESPACE_BEGIN
 
 namespace
 {
-	void writeint(std::ostream &out, int command)
+	void writeint(std::ostream &out, int value)
 	{
-		if (command < 127) {
-			char ch = static_cast<char>(command);
+		if (-126 <= value && value <= 127) {
+			char ch = static_cast<char>(value);
 			out.write(&ch, 1);
 		} else {
-			char ch[5];
-			ch[0] = 127;
-			const char *command_bits = reinterpret_cast<const char *>(&command);
-			for (int i = 1; i <= 4; i++) {
-				ch[i] = command_bits[i - 1];
+			int16 num = static_cast<int16>(value);
+			if(num == value){
+				char ch = '\x81';
+				const char *bits = reinterpret_cast<const char *>(&value);
+				out.write(&ch, 1);
+				out.write(bits, 2);
+			}else{
+				char ch = '\x80';
+				const char *bits = reinterpret_cast<const char *>(&value);
+				out.write(&ch, 1);
+				out.write(bits, 4);
 			}
-			out.write(ch, 5);
 		}
 	}
 
 	int readint(std::istream &in)
 	{
 		int value = in.get();
-		if (value < 0) {
-			return 0;
-		} else if (value == 127) {
+		if (value == 0x81) {
+			char cmd[2];
+			in.read(cmd, 2);
+			value = *(reinterpret_cast<int16 *>(cmd));
+		} else if (value == 0x80) {
 			char cmd[4];
 			in.read(cmd, 4);
-			value = *(reinterpret_cast<int *>(cmd));
+			value = *(reinterpret_cast<int32 *>(cmd));
 		}
 		return value;
 	}
@@ -57,23 +64,27 @@ namespace
 
 Packet::Packet()
 	: command(0)
+	, timeout(0)
 {
 }
 
 Packet::Packet(int command)
 	: command(command)
+	, timeout(0)
 {
 }
 
 Packet::Packet(int command, const Json &arguments)
 	: command(command)
 	, arguments(arguments)
+	, timeout(0)
 {
 }
 
 Packet::Packet(int command, Json &&arguments)
 	: command(command)
 	, arguments(std::move(arguments))
+	, timeout(0)
 {
 }
 

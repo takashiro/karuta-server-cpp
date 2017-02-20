@@ -124,6 +124,7 @@ uint64 AbstractSocket::readLine(char *buffer, uint64 size)
 		endl = d->buffer.gcount();
 
 		if (!d->buffer.eof()) {
+			endl--;
 			uint64 last = endl - 1;
 			if (buffer[last] == '\r') {
 				buffer[last] = '\0';
