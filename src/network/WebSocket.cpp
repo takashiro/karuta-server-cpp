@@ -37,9 +37,11 @@ KA_NAMESPACE_BEGIN
 struct WebSocket::Private
 {
 	TcpSocket *socket;
+	bool activeClose;
 
 	Private()
 		: socket(nullptr)
+		, activeClose(false)
 	{
 	}
 
@@ -57,6 +59,12 @@ struct WebSocket::Private
 			str++;
 		}
 		return str;
+	}
+
+	void sendClosingFrame()
+	{
+		char header[2] = {'\x88', '\0'};
+		socket->write(header, 2);
 	}
 };
 
@@ -211,39 +219,59 @@ bool WebSocket::open(const HostAddress &ip, ushort port)
 void WebSocket::close()
 {
 	if (d->socket) {
-		char header[2] = {'\x88', '\0'};
-		d->socket->write(header, 2);
-		d->socket->close();
+		d->activeClose = true;
+		d->sendClosingFrame();
 	}
 }
 
-std::string WebSocket::read()
+WebSocket &WebSocket::operator>>(std::string &message)
+{
+	read(message);
+	return *this;
+}
+
+WebSocket &WebSocket::operator<<(const std::string &message)
+{
+	write(message, true, true);
+	return *this;
+}
+
+bool WebSocket::read(std::string &message)
 {
 	if (d->socket == nullptr) {
-		return std::string();
+		return false;
 	}
 
 	char header[2];
 	uint64 rl = d->socket->read(header, 2);
 	if (rl != 2) {
-		return std::string();
+		return false;
 	}
-	/*  0-7: FIN RSV1 RSV2 RSV3 opcode(4) */
-	/* 8-15: MASK payload len(7) */
 
+	/*  0-7: FIN RSV1 RSV2 RSV3 opcode(4) */
+	if ((header[0] & 0xf) == 0x8) {
+		//Closing Frame
+		if (!d->activeClose) {
+			d->sendClosingFrame();
+		}
+		d->socket->close();
+		return false;
+	}
+
+	/* 8-15: MASK payload len(7) */
 	uint64 payload_length = header[1] & 0x7f;
 	if (payload_length == 126) {
 		char ext_length[2];
 		rl = d->socket->read(ext_length, 2);
 		if (rl != 2) {
-			return std::string();
+			return false;
 		}
 		payload_length = (ext_length[0] << 8) | ext_length[1];
 	} else if (payload_length == 127) {
 		char ext_length[8];
 		rl = d->socket->read(ext_length, 8);
 		if (rl != 8) {
-			return std::string();
+			return false;
 		}
 		payload_length = 0;
 		for (int i = 0; i < 8; i++) {
@@ -256,14 +284,14 @@ std::string WebSocket::read()
 	if (header[1] & 0x80) {
 		rl = d->socket->read(mask, 4);
 		if (rl != 4) {
-			return std::string();
+			return false;
 		}
 	}
 
 	char *data = new char[payload_length];
 	rl = d->socket->read(data, payload_length);
 	if (rl != payload_length) {
-		return std::string();
+		return false;
 	}
 
 	int j = 0;
@@ -275,11 +303,11 @@ std::string WebSocket::read()
 		}
 	}
 
-	std::string message;
+	message.clear();
 	message.append(data, payload_length);
 	delete[] data;
 
-	return message;
+	return true;
 }
 
 bool WebSocket::write(const std::string &message, bool binary, bool masked)

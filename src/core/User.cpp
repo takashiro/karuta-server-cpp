@@ -108,9 +108,9 @@ void User::setAction(const std::map<int, User::Action> *actions)
 
 void User::exec()
 {
+	std::string message;
 	for (;;) {
-		std::string message = d->socket->read();
-		if (message.empty()) {
+		if (!d->socket->read(message)) {
 			break;
 		}
 
@@ -144,8 +144,7 @@ void User::exec()
 
 void User::disconnect()
 {
-	notify(0, 1);
-	d->socket->close();
+	notify(0);
 }
 
 void User::notify(int command)

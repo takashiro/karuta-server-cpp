@@ -82,7 +82,8 @@ public:
 			User user(socket);
 			user.notify(10, number1);
 			user.notify(1010, number2);
-			user.notify(0);
+			user.disconnect();
+			user.exec();
 		});
 
 		server_thread.join();
