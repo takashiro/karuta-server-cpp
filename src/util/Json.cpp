@@ -310,22 +310,22 @@ bool json_try_read(std::istream &in, const char *str)
 
 }
 
-std::istream &operator>>(std::istream &in, Json &value)
+std::istream &operator>>(std::istream &in, Json &json)
 {
-	if (value.type() != Json::Null) {
-		value.release();
+	if (json.type() != Json::Null) {
+		json.release();
 	}
 
 	if (json_try_read(in, "null")) {
-		value.m_type = Json::Null;
+		json.m_type = Json::Null;
 	} else if (json_try_read(in, "false")) {
-		value.m_type = Json::Boolean;
-		value.m_value.boolean = false;
+		json.m_type = Json::Boolean;
+		json.m_value.boolean = false;
 	} else if (json_try_read(in, "true")) {
-		value.m_type = Json::Boolean;
-		value.m_value.boolean = true;
+		json.m_type = Json::Boolean;
+		json.m_value.boolean = true;
 	} else if (json_try_read(in, '"')) {
-		value.m_type = Json::String;
+		json.m_type = Json::String;
 		std::string str;
 		char ch;
 		while (!in.eof()) {
@@ -341,23 +341,32 @@ std::istream &operator>>(std::istream &in, Json &value)
 			}
 			str += ch;
 		}
-		value.m_value.str = new std::string(std::move(str));
+		json.m_value.str = new std::string(std::move(str));
 	} else {
 		char ch;
 		in.get(ch);
 		if (ch == '-' || (ch >= '0' && ch <= '9') || ch == '.') {
 			in.unget();
-			value.m_type = Json::Double;
-			in >> value.m_value.dnum;
+			std::streamsize offset = in.tellg();
+			in >> json.m_value.inum;
+			in.get(ch);
+			if (ch == '.' || ch == 'e') {
+				in.seekg(offset, std::ios::beg);
+				json.m_type = Json::Double;
+				in >> json.m_value.dnum;
+			} else {
+				json.m_type = Json::Integer;
+				in.unget();
+			}
 		} else if (ch == '[') {
-			value.m_type = Json::Array;
-			value.m_value.array = new JsonArray();
+			json.m_type = Json::Array;
+			json.m_value.array = new JsonArray();
 			if (json_try_read(in, ']')) {
 				return in;
 			}
 
-			JsonArray &array = (*value.m_value.array);
-			while (true) {
+			JsonArray &array = (*json.m_value.array);
+			for (;;) {
 				Json element;
 				in >> element;
 				array.push_back(std::move(element));
@@ -365,20 +374,19 @@ std::istream &operator>>(std::istream &in, Json &value)
 				if (!json_try_read(in, ',')) {
 					if (!(json_try_read(in, ']'))) {
 						//vError("Expect ]");
-					} else {
-						break;
 					}
+					break;
 				}
 			}
 		} else if (ch == '{') {
-			value.m_type = Json::Object;
-			value.m_value.object = new JsonObject();
+			json.m_type = Json::Object;
+			json.m_value.object = new JsonObject();
 			if (json_try_read(in, '}')) {
 				return in;
 			}
 
-			JsonObject &object = *(value.m_value.object);
-			while (true) {
+			JsonObject &object = *(json.m_value.object);
+			for (;;) {
 				Json key;
 				in >> key;
 				if (key.type() != Json::String) {
@@ -397,9 +405,8 @@ std::istream &operator>>(std::istream &in, Json &value)
 				if (!json_try_read(in, ',')) {
 					if (!(json_try_read(in, '}'))) {
 						//vError("Expect }");
-					} else {
-						break;
 					}
+					break;
 				}
 			}
 		} else {

@@ -53,7 +53,7 @@ public:
 		assert(result == 617931000);
 	}
 
-	TEST_METHOD(IOPreciseTest)
+	TEST_METHOD(IOIntegerTest)
 	{
 		int number = 1234567890;
 		Json in(number);
@@ -61,7 +61,21 @@ public:
 		ss << in;
 		Json out;
 		ss >> out;
+		assert(out.type() == Json::Integer);
 		assert(number == out.toInt());
+	}
+
+	TEST_METHOD(IODoubleTest)
+	{
+		double number = 1234.56;
+		Json in(number);
+		std::stringstream ss;
+		ss << in;
+		Json out;
+		ss >> out;
+		assert(out.type() == Json::Double);
+		std::cout << out.toDouble() << std::endl;
+		assert(number == out.toDouble());
 	}
 
 	TEST_METHOD(StringTest)
@@ -73,6 +87,63 @@ public:
 		assert(json.isString());
 		std::string str = json.toString();
 		assert(str == "\"So much bluuuuuue!!!\", Yunzhe Fang surprised.");
+	}
+
+	TEST_METHOD(BrokenArrayTest1)
+	{
+		std::stringstream ss;
+		ss << "[1,2,3,4,5";
+		Json json;
+		ss >> json;
+		assert(json.isArray());
+		for(int i = 0; i < 5; i++) {
+			assert(json[i].toInt() == i + 1);
+		}
+	}
+
+	TEST_METHOD(BrokenArrayTest2)
+	{
+		std::stringstream ss;
+		ss << "[1,2,3,4,5,asdfjb";
+		Json json;
+		ss >> json;
+		assert(json.isArray());
+		for(int i = 0; i < 5; i++) {
+			assert(json[i].toInt() == i + 1);
+		}
+	}
+
+	TEST_METHOD(BrokenObjectTest1)
+	{
+		std::stringstream ss;
+		ss << "{1994, 1010";
+		Json json;
+		ss >> json;
+		assert(json.isObject());
+		assert(json.size() == 0);
+	}
+
+	TEST_METHOD(BrokenObjectTest2)
+	{
+		std::stringstream ss;
+		ss << "{\"fang\" : 1994, \"crasteham\" : 1010, 123";
+		Json json;
+		ss >> json;
+		assert(json.isObject());
+		assert(json["fang"].toInt() == 1994);
+		assert(json["crasteham"].toInt() == 1010);
+	}
+
+	TEST_METHOD(RandomStringTest)
+	{
+		for (int t = 0; t < 100; t++) {
+			std::stringstream ss;
+			for (int i = 0; i < 10; i++) {
+				ss.put(rand());
+			}
+			Json json;
+			ss >> json;
+		}
 	}
 
 };
