@@ -35,6 +35,9 @@ public:
 	Room(uint id);
 	~Room();
 
+	Room(Room &&source);
+	Room(const Room &room) = delete;
+
 	const std::vector<User *> &users() const;
 	void addUser(User *user);
 	void removeUser(User *user);

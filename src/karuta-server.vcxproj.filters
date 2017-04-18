@@ -38,6 +38,9 @@
     <ClCompile Include="util\Semaphore.cpp">
       <Filter>util</Filter>
     </ClCompile>
+    <ClCompile Include="core\Application.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="network\HostAddress.h">
@@ -79,6 +82,9 @@
     </ClInclude>
     <ClInclude Include="util\Semaphore.h">
       <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Application.h">
+      <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

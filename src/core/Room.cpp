@@ -53,6 +53,12 @@ Room::~Room()
 	delete d;
 }
 
+Room::Room(Room &&source)
+	: d(source.d)
+{
+	source.d = nullptr;
+}
+
 const std::vector<User *> &Room::users() const
 {
 	return d->users;

@@ -160,6 +160,7 @@
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="core\Application.h" />
     <ClInclude Include="core\Packet.h" />
     <ClInclude Include="core\protocol.h" />
     <ClInclude Include="core\Room.h" />
@@ -176,6 +177,7 @@
     <ClInclude Include="util\util.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="core\Application.cpp" />
     <ClCompile Include="core\Packet.cpp" />
     <ClCompile Include="core\Room.cpp" />
     <ClCompile Include="core\Server.cpp" />

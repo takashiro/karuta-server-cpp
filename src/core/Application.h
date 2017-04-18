@@ -18,12 +18,22 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 takashiro@qq.com
 ************************************************************************/
 
-#include "core/Application.h"
+#pragma once
 
-KA_USING_NAMESPACE
+#include "global.h"
 
-int main(int argc, const char *argv[])
+KA_NAMESPACE_BEGIN
+
+class Application
 {
-	Application app(argc, argv);
-	return app.exec();
-}
+public:
+	Application(int argc, const char *argv[]);
+	~Application();
+
+	int exec();
+
+private:
+	KA_DECLARE_PRIVATE
+};
+
+KA_NAMESPACE_END
