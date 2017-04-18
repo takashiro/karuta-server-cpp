@@ -18,7 +18,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 takashiro@qq.com
 ************************************************************************/
 
-#include "core/Application.h"
+#include "Application.h"
 
 KA_USING_NAMESPACE
 

@@ -23,6 +23,7 @@ takashiro@qq.com
 #include <Json.h>
 
 #include <sstream>
+#include <iostream>
 
 namespace UnitTest {
 

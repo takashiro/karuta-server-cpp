@@ -26,6 +26,8 @@ takashiro@qq.com
 #include <thread>
 #include <vector>
 
+#include <string.h>
+
 #include "Room.h"
 #include "Server.h"
 #include "User.h"
