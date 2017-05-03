@@ -41,6 +41,18 @@ takashiro@qq.com
 #error "Unsupported OS"
 #endif
 
+//Surpress unused variable warnings
+#define __KA_UNUSED1(a) (void)(a)
+#define __KA_UNUSED2(a,b) (void)(a),(void)(b)
+#define __KA_UNUSED3(a,b,c) (void)(a),(void)(b),(void)(c)
+#define __KA_UNUSED4(a,b,c,d) (void)(a),(void)(b),(void)(c),(void)(d)
+#define __KA_UNUSED5(a,b,c,d,e) (void)(a),(void)(b),(void)(c),(void)(d),(void)(e)
+#define __KA_VA_NUM_ARGS_IMPL(_1,_2,_3,_4,_5, N,...) N
+#define __KA_VA_NUM_ARGS(...) __KA_VA_NUM_ARGS_IMPL(__VA_ARGS__, 5, 4, 3, 2, 1)
+#define __KA_ALL_UNUSED_IMPL_(nargs) __KA_UNUSED ## nargs
+#define __KA_ALL_UNUSED_IMPL(nargs) __KA_ALL_UNUSED_IMPL_(nargs)
+#define KA_UNUSED(...) __KA_ALL_UNUSED_IMPL( __KA_VA_NUM_ARGS(__VA_ARGS__))(__VA_ARGS__ )
+
 KA_NAMESPACE_BEGIN
 
 typedef unsigned char uchar;
