@@ -20,16 +20,18 @@ takashiro@qq.com
 
 #pragma once
 
-#include "global.h"
+#include "UserAction.h"
 
 #include <map>
-#include <functional>
 
 KA_NAMESPACE_BEGIN
 
 class Json;
-class WebSocket;
+class Room;
 class Semaphore;
+class Server;
+class WebSocket;
+
 struct HostAddress;
 
 class User
@@ -41,7 +43,7 @@ public:
 
 	bool connect(const HostAddress &ip, ushort port);
 
-	typedef std::function<void(User *, const Json &)> Action;
+	typedef UserAction Action;
 	void setAction(const std::map<int, Action> *handlers);
 	void exec();
 
@@ -58,6 +60,17 @@ public:
 	bool executeRequest(std::function<void(const Json &)> &&callback);
 	bool executeRequest();
 	Json getReply() const;
+
+	uint id() const;
+	void setId(uint id);
+
+	bool isLoggedIn() const;
+
+	Room *room() const;
+	void setRoom(Room *room);
+
+	Server *server() const;
+	void setServer(Server *server);
 
 private:
 	KA_DECLARE_PRIVATE

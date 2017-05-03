@@ -96,6 +96,7 @@ User *Server::next()
 	if (socket) {
 		WebSocket *websocket = new WebSocket(socket);
 		User *user = new User(websocket);
+		user->setServer(this);
 		return user;
 	} else {
 		return nullptr;

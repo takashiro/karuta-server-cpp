@@ -20,6 +20,7 @@ takashiro@qq.com
 
 #include "Room.h"
 #include "User.h"
+#include "Packet.h"
 
 #include "Json.h"
 #include "Semaphore.h"
@@ -66,6 +67,7 @@ const std::vector<User *> &Room::users() const
 
 void Room::addUser(User *user)
 {
+	user->setRoom(this);
 	d->users.push_back(user);
 }
 
@@ -73,6 +75,7 @@ void Room::removeUser(User *user)
 {
 	for (auto iter = d->users.begin(); iter != d->users.end(); iter++) {
 		if (*iter == user) {
+			user->setRoom(nullptr);
 			d->users.erase(iter);
 			break;
 		}

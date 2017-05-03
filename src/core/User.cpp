@@ -32,7 +32,7 @@ KA_NAMESPACE_BEGIN
 struct User::Private
 {
 	WebSocket *socket;
-	const std::map<int, User::Action> *actions;
+	const std::map<int, UserAction> *actions;
 
 	int replyCommand;
 	Semaphore replySem;
@@ -42,10 +42,17 @@ struct User::Private
 	std::string requestMessage;
 	std::function<void(const Json &)> replyCallback;
 
+	uint id;
+	Room *room;
+	Server *server;
+
 	Private()
 		: socket(nullptr)
 		, actions(nullptr)
 		, replySem(0)
+		, id(0)
+		, room(nullptr)
+		, server(nullptr)
 	{
 	}
 
@@ -101,7 +108,7 @@ bool User::connect(const HostAddress &ip, ushort port)
 	}
 }
 
-void User::setAction(const std::map<int, User::Action> *actions)
+void User::setAction(const std::map<int, UserAction> *actions)
 {
 	d->actions = actions;
 }
@@ -136,7 +143,7 @@ void User::exec()
 		}
 		auto i = d->actions->find(packet.command);
 		if (i != d->actions->end()) {
-			User::Action behavior = i->second;
+			UserAction behavior = i->second;
 			behavior(this, packet.arguments);
 		}
 	}
@@ -227,6 +234,41 @@ bool User::executeRequest()
 Json User::getReply() const
 {
 	return d->reply;
+}
+
+uint User::id() const
+{
+	return d->id;
+}
+
+void User::setId(uint id)
+{
+	d->id = id;
+}
+
+bool User::isLoggedIn() const
+{
+	return d->id > 0;
+}
+
+Room *User::room() const
+{
+	return d->room;
+}
+
+void User::setRoom(Room *room)
+{
+	d->room = nullptr;
+}
+
+Server *User::server() const
+{
+	return d->server;
+}
+
+void User::setServer(Server *server)
+{
+	d->server = server;
 }
 
 KA_NAMESPACE_END
