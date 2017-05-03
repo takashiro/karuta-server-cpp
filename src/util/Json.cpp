@@ -284,6 +284,9 @@ bool json_try_read(std::istream &in, const char *str)
 {
 	char first;
 	do {
+		if (in.eof()) {
+			return false;
+		}
 		in.get(first);
 	} while (isspace(first));
 
