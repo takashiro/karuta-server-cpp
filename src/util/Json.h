@@ -34,7 +34,7 @@ class Json;
 using JsonArray = std::vector<Json>;
 using JsonObject = std::map<std::string, Json>;
 
-class Json
+class KA_DLL_EXPORT Json
 {
 public:
 	enum Type
@@ -120,8 +120,8 @@ public:
 	size_t size() const;
 	void clear();
 
-	friend std::istream &operator>>(std::istream &in, Json &value);
-	friend std::ostream &operator<<(std::ostream &out, const Json &value);
+	friend KA_DLL_EXPORT std::istream &operator>>(std::istream &in, Json &value);
+	friend KA_DLL_EXPORT std::ostream &operator<<(std::ostream &out, const Json &value);
 
 private:
 	void copy(const Json &source);

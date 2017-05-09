@@ -9,7 +9,7 @@ SOURCEDIR = \
 	src/util \
 	src
 
-INCLUDEPATH = $(SOURCEDIR)
+INCLUDEPATH = $(SOURCEDIR) include
 
 SOURCES = $(foreach dir,$(SOURCEDIR),$(wildcard $(dir)/*.cpp))
 

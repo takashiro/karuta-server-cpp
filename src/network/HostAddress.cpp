@@ -22,8 +22,14 @@ takashiro@qq.com
 
 KA_NAMESPACE_BEGIN
 
-HostAddress HostAddress::Any(0);
-HostAddress HostAddress::Local(127, 0, 0, 1);
+HostAddress::HostAddress(uint32 ip)
+{
+	const uchar *sec = reinterpret_cast<const uchar *>(&ip);
+	mIp4[0] = sec[3];
+	mIp4[1] = sec[2];
+	mIp4[2] = sec[1];
+	mIp4[3] = sec[0];
+}
 
 HostAddress::HostAddress(uchar ip1, uchar ip2, uchar ip3, uchar ip4)
 {

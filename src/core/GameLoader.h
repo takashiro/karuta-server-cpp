@@ -18,24 +18,19 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 takashiro@qq.com
 ************************************************************************/
 
-#pragma once
-
-#include "HostAddress.h"
+#include "global.h"
 
 KA_NAMESPACE_BEGIN
 
-class TcpSocket;
+class GameDriver;
 
-class KA_DLL_EXPORT TcpServer
+class GameLoader
 {
 public:
-	TcpServer();
-	~TcpServer();
+	GameLoader(const char *name);
+	~GameLoader();
 
-	bool listen(const HostAddress &ip, ushort port);
-	void close();
-
-	TcpSocket *next();
+	GameDriver *driver();
 
 private:
 	KA_DECLARE_PRIVATE

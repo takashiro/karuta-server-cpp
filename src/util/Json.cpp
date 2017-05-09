@@ -268,10 +268,10 @@ namespace
 
 bool json_try_read(std::istream &in, char ch)
 {
-	char first;
+	char first = '\0';
 	do {
 		in.get(first);
-	} while (isspace(first));
+	} while (first > '\0' && isspace(first));
 
 	if (first == ch)
 		return true;
@@ -282,13 +282,13 @@ bool json_try_read(std::istream &in, char ch)
 
 bool json_try_read(std::istream &in, const char *str)
 {
-	char first;
+	char first = '\0';
 	do {
 		if (in.eof()) {
 			return false;
 		}
 		in.get(first);
-	} while (isspace(first));
+	} while (first > '\0' && isspace(first));
 
 	const char *cur = str;
 	if (*cur != first) {

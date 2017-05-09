@@ -53,6 +53,13 @@ takashiro@qq.com
 #define __KA_ALL_UNUSED_IMPL(nargs) __KA_ALL_UNUSED_IMPL_(nargs)
 #define KA_UNUSED(...) __KA_ALL_UNUSED_IMPL( __KA_VA_NUM_ARGS(__VA_ARGS__))(__VA_ARGS__ )
 
+//DLL
+#if defined(KA_OS_WIN)
+#define KA_DLL_EXPORT __declspec(dllexport)
+#else
+#define KA_DLL_EXPORT
+#endif
+
 KA_NAMESPACE_BEGIN
 
 typedef unsigned char uchar;

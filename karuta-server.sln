@@ -2,10 +2,18 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26403.3
-MinimumVisualStudioVersion = 10.0.40219.1
+MinimumVisualStudioVersion = 15.0.26403.3
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "karuta-server", "src\karuta-server.vcxproj", "{49E4BEA2-F9EE-430C-AC8C-32A12ED23687}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0A4DD392-E6E5-43FE-9BA1-B2B151FE88BA} = {0A4DD392-E6E5-43FE-9BA1-B2B151FE88BA}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unit-test", "test\unit-test.vcxproj", "{DD01E76F-E0D8-42CE-89AD-599EFB6105A3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0A4DD392-E6E5-43FE-9BA1-B2B151FE88BA} = {0A4DD392-E6E5-43FE-9BA1-B2B151FE88BA}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "karuta-lib", "src\karuta-lib.vcxproj", "{0A4DD392-E6E5-43FE-9BA1-B2B151FE88BA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +39,14 @@ Global
 		{DD01E76F-E0D8-42CE-89AD-599EFB6105A3}.Release|x64.Build.0 = Release|x64
 		{DD01E76F-E0D8-42CE-89AD-599EFB6105A3}.Release|x86.ActiveCfg = Release|Win32
 		{DD01E76F-E0D8-42CE-89AD-599EFB6105A3}.Release|x86.Build.0 = Release|Win32
+		{0A4DD392-E6E5-43FE-9BA1-B2B151FE88BA}.Debug|x64.ActiveCfg = Debug|x64
+		{0A4DD392-E6E5-43FE-9BA1-B2B151FE88BA}.Debug|x64.Build.0 = Debug|x64
+		{0A4DD392-E6E5-43FE-9BA1-B2B151FE88BA}.Debug|x86.ActiveCfg = Debug|Win32
+		{0A4DD392-E6E5-43FE-9BA1-B2B151FE88BA}.Debug|x86.Build.0 = Debug|Win32
+		{0A4DD392-E6E5-43FE-9BA1-B2B151FE88BA}.Release|x64.ActiveCfg = Release|x64
+		{0A4DD392-E6E5-43FE-9BA1-B2B151FE88BA}.Release|x64.Build.0 = Release|x64
+		{0A4DD392-E6E5-43FE-9BA1-B2B151FE88BA}.Release|x86.ActiveCfg = Release|Win32
+		{0A4DD392-E6E5-43FE-9BA1-B2B151FE88BA}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

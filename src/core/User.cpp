@@ -115,6 +115,10 @@ void User::setAction(const std::map<int, UserAction> *actions)
 
 void User::exec()
 {
+	if (d->socket == nullptr) {
+		return;
+	}
+
 	std::string message;
 	for (;;) {
 		if (!d->socket->read(message)) {

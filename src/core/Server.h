@@ -29,7 +29,7 @@ KA_NAMESPACE_BEGIN
 class Room;
 class User;
 
-class Server
+class KA_DLL_EXPORT Server
 {
 public:
 	Server();

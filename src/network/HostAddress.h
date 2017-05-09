@@ -24,17 +24,17 @@ takashiro@qq.com
 
 KA_NAMESPACE_BEGIN
 
-struct HostAddress
+struct KA_DLL_EXPORT HostAddress
 {
 	HostAddress() : mIp4Value(0) {}
-	HostAddress(uint32 ip) : mIp4Value(ip) {}
+	HostAddress(uint32 ip);
 	HostAddress(uchar ip1, uchar ip2, uchar ip3, uchar ip4);
 
 	operator uint32() const { return mIp4Value; }
 	HostAddress &operator = (HostAddress value) { mIp4Value = value.mIp4Value; return *this; }
 
-	static HostAddress Any;
-	static HostAddress Local;
+	static const uint32 Any = 0x00000000;
+	static const uint32 Local = 0x7F000001;
 
 private:
 	union

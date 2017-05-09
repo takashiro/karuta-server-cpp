@@ -20,25 +20,23 @@ takashiro@qq.com
 
 #pragma once
 
-#include "HostAddress.h"
+#include "global.h"
+
+#include <string>
 
 KA_NAMESPACE_BEGIN
 
-class TcpSocket;
-
-class KA_DLL_EXPORT TcpServer
+class KA_DLL_EXPORT GameDriver
 {
 public:
-	TcpServer();
-	~TcpServer();
+	virtual ~GameDriver() {}
 
-	bool listen(const HostAddress &ip, ushort port);
-	void close();
+	virtual void start() = 0;
+	virtual void end() = 0;
 
-	TcpSocket *next();
-
-private:
-	KA_DECLARE_PRIVATE
+	virtual void addPlayer(uint id, const std::string &screenName) = 0;
+	virtual void removePlayer(uint id) = 0;
+	virtual void modifyPlayer(uint id, const char *key, void *value) = 0;
 };
 
 KA_NAMESPACE_END

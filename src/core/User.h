@@ -34,7 +34,7 @@ class WebSocket;
 
 struct HostAddress;
 
-class User
+class KA_DLL_EXPORT User
 {
 public:
 	User();

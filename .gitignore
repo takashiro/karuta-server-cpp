@@ -1,6 +1,7 @@
 /bin/
 /ipch/
 /obj/
+/lib/
 *.suo
 *.opendb
 *.vcxproj.user

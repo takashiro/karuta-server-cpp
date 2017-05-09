@@ -28,7 +28,7 @@ KA_NAMESPACE_BEGIN
 
 class TcpSocket;
 
-class WebSocket
+class KA_DLL_EXPORT WebSocket
 {
 public:
 	WebSocket();

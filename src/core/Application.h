@@ -24,7 +24,7 @@ takashiro@qq.com
 
 KA_NAMESPACE_BEGIN
 
-class Application
+class KA_DLL_EXPORT Application
 {
 public:
 	Application(int argc, const char *argv[]);

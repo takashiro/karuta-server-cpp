@@ -29,7 +29,7 @@ KA_NAMESPACE_BEGIN
 class Json;
 class User;
 
-class Room
+class KA_DLL_EXPORT Room
 {
 public:
 	Room(uint id);

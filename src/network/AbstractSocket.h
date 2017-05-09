@@ -26,7 +26,7 @@ takashiro@qq.com
 
 KA_NAMESPACE_BEGIN
 
-class AbstractSocket
+class KA_DLL_EXPORT AbstractSocket
 {
 public:
 	AbstractSocket();
