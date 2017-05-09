@@ -25,12 +25,14 @@ takashiro@qq.com
 #include <string>
 #include <thread>
 #include <vector>
+#include <list>
 
 #include <string.h>
 
 #include "Room.h"
 #include "Server.h"
 #include "User.h"
+#include "UserAction.h"
 
 #ifdef KA_OS_WIN
 #include <Winsock2.h>
@@ -97,22 +99,35 @@ int Application::exec()
 		return 1;
 	}
 
+	std::list<std::thread> listeners;
+
 	std::thread daemon([&]() {
 		for (;;) {
 			User *user = d->server.next();
 			if (user == nullptr) {
 				break;
 			}
+
+			//TO-DO: Login check
+
+			listeners.push_back(std::thread([user]() {
+				user->setAction(&BasicActions());
+				user->exec();
+			}));
 		}
 	});
 
 	std::string command;
 	while (std::cin >> command) {
-		std::cout << "error" << std::endl;
+		//TO-DO: Execute command
 	}
 	
 	d->server.close();
+
 	daemon.join();
+	for (std::thread &listener : listeners) {
+		listener.join();
+	}
 	return 0;
 }
 

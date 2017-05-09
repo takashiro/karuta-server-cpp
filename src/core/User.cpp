@@ -151,7 +151,7 @@ void User::exec()
 
 void User::disconnect()
 {
-	notify(0);
+	d->socket->close();
 }
 
 void User::notify(int command)
@@ -258,7 +258,7 @@ Room *User::room() const
 
 void User::setRoom(Room *room)
 {
-	d->room = nullptr;
+	d->room = room;
 }
 
 Server *User::server() const

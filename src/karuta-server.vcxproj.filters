@@ -41,6 +41,9 @@
     <ClCompile Include="core\Application.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="core\UserAction.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="network\HostAddress.h">
@@ -84,6 +87,9 @@
       <Filter>util</Filter>
     </ClInclude>
     <ClInclude Include="core\Application.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\UserAction.h">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>

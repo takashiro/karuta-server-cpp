@@ -22,27 +22,16 @@ takashiro@qq.com
 
 #include "global.h"
 
+#include <functional>
+#include <map>
+
 KA_NAMESPACE_BEGIN
 
-namespace net {
+class User;
+class Json;
 
-enum NetworkCommand
-{
-	Invalid,
+typedef std::function<void(User *, const Json &)> UserAction;
 
-	CheckVersion,
-
-	Login,
-	Logout,
-
-	CreateRoom,
-	EnterRoom,
-
-	Speak,
-
-	NetworkCommandCount
-};
-
-}
+const std::map<int, UserAction> &BasicActions();
 
 KA_NAMESPACE_END
