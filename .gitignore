@@ -8,6 +8,6 @@
 /*.depend
 /*.layout
 *.pro.user
-/.vscode/
-/.vs/
+.vscode/
+.vs/
 /extension/

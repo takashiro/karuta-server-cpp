@@ -30,7 +30,7 @@ KA_NAMESPACE_BEGIN
 class User;
 class Json;
 
-typedef std::function<void(User *, const Json &)> UserAction;
+using UserAction = std::function<void(User *, const Json &)>;
 
 const std::map<int, UserAction> &BasicActions();
 

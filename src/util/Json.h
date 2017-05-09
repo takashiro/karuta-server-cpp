@@ -31,8 +31,8 @@ takashiro@qq.com
 KA_NAMESPACE_BEGIN
 
 class Json;
-typedef std::vector<Json> JsonArray;
-typedef std::map<std::string, Json> JsonObject;
+using JsonArray = std::vector<Json>;
+using JsonObject = std::map<std::string, Json>;
 
 class Json
 {

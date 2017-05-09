@@ -43,7 +43,7 @@ public:
 
 	bool connect(const HostAddress &ip, ushort port);
 
-	typedef UserAction Action;
+	using Action = UserAction;
 	void setAction(const std::map<int, Action> *handlers);
 	void exec();
 
