@@ -26,6 +26,8 @@ takashiro@qq.com
 
 KA_NAMESPACE_BEGIN
 
+class User;
+
 class KA_DLL_EXPORT GameDriver
 {
 public:
@@ -34,9 +36,9 @@ public:
 	virtual void start() = 0;
 	virtual void end() = 0;
 
-	virtual void addPlayer(uint id, const std::string &screenName) = 0;
-	virtual void removePlayer(uint id) = 0;
-	virtual void modifyPlayer(uint id, const char *key, void *value) = 0;
+	virtual void addPlayer(User *user, const std::string &screenName) = 0;
+	virtual void removePlayer(uint uid) = 0;
+	virtual void modifyPlayer(uint uid, const char *key, void *value) = 0;
 };
 
 KA_NAMESPACE_END

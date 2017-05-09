@@ -66,11 +66,11 @@ GameLoader::GameLoader(const char *name)
 
 GameLoader::~GameLoader()
 {
-	if (d->dll) {
-		FreeLibrary(d->dll);
-	}
 	if (d->driver) {
 		delete d->driver;
+	}
+	if (d->dll) {
+		FreeLibrary(d->dll);
 	}
 	delete d;
 }
