@@ -10,3 +10,4 @@
 *.pro.user
 /.vscode/
 /.vs/
+/extension/
