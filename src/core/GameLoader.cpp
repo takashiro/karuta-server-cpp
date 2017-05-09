@@ -46,7 +46,7 @@ GameLoader::GameLoader(const char *name)
 {
 #if defined(KA_OS_WIN)
 # ifdef UNICODE
-	int raw_length = strlen(name);
+	int raw_length = static_cast<int>(strlen(name));
 	int length = MultiByteToWideChar(CP_UTF8, 0, name, raw_length, nullptr, 0) + 1;
 	wchar_t *module_path = new wchar_t[length]();
 	MultiByteToWideChar(CP_UTF8, 0, name, raw_length, module_path, length);

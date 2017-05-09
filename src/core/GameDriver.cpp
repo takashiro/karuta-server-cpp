@@ -18,20 +18,18 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 takashiro@qq.com
 ************************************************************************/
 
-#pragma once
-
-#include "global.h"
-
-#include <functional>
-#include <map>
+#include "GameDriver.h"
 
 KA_NAMESPACE_BEGIN
 
-class User;
-class Json;
+void GameDriver::setRoom(Room *room)
+{
+	mRoom = room;
+}
 
-using UserAction = std::function<void(User *, const Json &)>;
-
-KA_DLL_EXPORT const std::map<int, UserAction> &BasicActions();
+Room *GameDriver::room()
+{
+	return mRoom;
+}
 
 KA_NAMESPACE_END

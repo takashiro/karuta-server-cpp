@@ -157,7 +157,7 @@ uint64 AbstractSocket::readLine(char *buffer, uint64 size)
 				}
 				if (new_offset < received) {
 					const char *rest = buffer + new_offset;
-					int length = received - new_offset;
+					int length = static_cast<int>(received - new_offset);
 					d->buffer.write(rest, length);
 				}
 				return endl;

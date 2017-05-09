@@ -189,6 +189,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\Application.cpp" />
+    <ClCompile Include="core\GameDriver.cpp" />
     <ClCompile Include="core\GameLoader.cpp" />
     <ClCompile Include="core\Packet.cpp" />
     <ClCompile Include="core\Room.cpp" />

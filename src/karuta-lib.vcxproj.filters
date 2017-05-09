@@ -46,6 +46,9 @@
     <ClCompile Include="core\GameLoader.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="core\GameDriver.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="network\HostAddress.h">
