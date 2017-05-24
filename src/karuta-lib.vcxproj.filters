@@ -37,9 +37,6 @@
     <ClCompile Include="util\Semaphore.cpp">
       <Filter>util</Filter>
     </ClCompile>
-    <ClCompile Include="core\Application.cpp">
-      <Filter>core</Filter>
-    </ClCompile>
     <ClCompile Include="core\UserAction.cpp">
       <Filter>core</Filter>
     </ClCompile>
@@ -89,9 +86,6 @@
     </ClInclude>
     <ClInclude Include="util\Semaphore.h">
       <Filter>util</Filter>
-    </ClInclude>
-    <ClInclude Include="core\Application.h">
-      <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="core\UserAction.h">
       <Filter>core</Filter>

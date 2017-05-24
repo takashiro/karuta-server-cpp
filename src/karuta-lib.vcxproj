@@ -168,7 +168,6 @@
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="core\Application.h" />
     <ClInclude Include="core\GameDriver.h" />
     <ClInclude Include="core\GameLoader.h" />
     <ClInclude Include="core\global.h" />
@@ -188,7 +187,6 @@
     <ClInclude Include="util\util.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="core\Application.cpp" />
     <ClCompile Include="core\GameDriver.cpp" />
     <ClCompile Include="core\GameLoader.cpp" />
     <ClCompile Include="core\Packet.cpp" />
