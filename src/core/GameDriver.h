@@ -21,6 +21,7 @@ takashiro@qq.com
 #pragma once
 
 #include "global.h"
+#include "UserAction.h"
 
 #include <string>
 
@@ -32,20 +33,25 @@ class User;
 class KA_DLL_EXPORT GameDriver
 {
 public:
-	virtual ~GameDriver() {}
+	GameDriver();
+	virtual ~GameDriver();
+
+	void setName(const std::string &name);
+	const std::string &name() const;
 
 	void setRoom(Room *room);
 	Room *room();
 
+	virtual const std::map<int, UserAction> *getUserActions() const = 0;
+
 	virtual void start() = 0;
 	virtual void end() = 0;
 
-	virtual void addPlayer(User *user, const std::string &screenName) = 0;
-	virtual void removePlayer(uint uid) = 0;
-	virtual void modifyPlayer(uint uid, const char *key, void *value) = 0;
+	virtual void addPlayer(User *user) = 0;
+	virtual void removePlayer(User *user) = 0;
 
 protected:
-	Room *mRoom;
+	KA_DECLARE_PRIVATE
 };
 
 KA_NAMESPACE_END

@@ -22,14 +22,40 @@ takashiro@qq.com
 
 KA_NAMESPACE_BEGIN
 
+struct GameDriver::Private
+{
+	std::string name;
+	Room *room;
+};
+
+GameDriver::GameDriver()
+	: d(new Private)
+{
+}
+
+GameDriver::~GameDriver()
+{
+	delete d;
+}
+
+void GameDriver::setName(const std::string &name)
+{
+	d->name = name;
+}
+
+const std::string &GameDriver::name() const
+{
+	return d->name;
+}
+
 void GameDriver::setRoom(Room *room)
 {
-	mRoom = room;
+	d->room = room;
 }
 
 Room *GameDriver::room()
 {
-	return mRoom;
+	return d->room;
 }
 
 KA_NAMESPACE_END
