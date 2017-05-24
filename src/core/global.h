@@ -24,10 +24,14 @@ takashiro@qq.com
 #define KA_NAMESPACE_BEGIN namespace KA_NAMESPACE {
 #define KA_NAMESPACE_END }
 #define KA_USING_NAMESPACE using namespace KA_NAMESPACE;
+#define KA_USING(identifier) using identifier = KA_NAMESPACE::identifier;
+#define KA_IMPORT KA_NAMESPACE::
 #else
 #define KA_NAMESPACE_BEGIN
 #define KA_NAMESPACE_END
 #define KA_USING_NAMESPACE
+#define KA_USING
+#define KA_IMPORT
 #endif // KA_NAMESPACE
 
 #define KA_DECLARE_PRIVATE struct Private; friend struct Private; Private *d;
