@@ -40,6 +40,7 @@ public:
 
 	std::vector<Room *> rooms() const;
 	Room *createRoom(uint id);
+	Room *createRoom(uint id, const std::string &driver);
 	Room *findRoom(uint id);
 
 	User *next();

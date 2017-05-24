@@ -80,6 +80,18 @@ Room *Server::createRoom(uint id)
 	return room;
 }
 
+Room *Server::createRoom(uint id, const std::string &driver)
+{
+	Room *room = findRoom(id);
+	if (room) {
+		return room;
+	}
+	room = new Room(id);
+	room->loadDriver(driver);
+	d->rooms[id] = room;
+	return room;
+}
+
 Room *Server::findRoom(uint id)
 {
 	std::map<uint, Room *>::iterator iter = d->rooms.find(id);

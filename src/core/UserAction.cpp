@@ -65,8 +65,11 @@ const std::map<int, UserAction> &BasicActions()
 				old_room->removeUser(user);
 			}
 
+			int room_id = args["id"].toInt();
+			std::string room_game = args["game"].toString();
+
 			Server *server = user->server();
-			Room *new_room = server->createRoom(args.toInt());
+			Room *new_room = server->createRoom(room_id, room_game);
 			if (new_room) {
 				new_room->addUser(user);
 			}

@@ -19,11 +19,16 @@ takashiro@qq.com
 ************************************************************************/
 
 #include "Room.h"
+
+#include "GameDriver.h"
+#include "GameLoader.h"
 #include "User.h"
 #include "Packet.h"
 
 #include "Json.h"
 #include "Semaphore.h"
+
+#include "protocol.h"
 
 #include <vector>
 #include <thread>
@@ -37,9 +42,21 @@ struct Room::Private
 	uint id;
 	std::vector<User *> users;
 
+	std::string driverName;
+	GameLoader *driverLoader;
+	GameDriver *driver;
+
 	Private()
 		: id(0)
+		, driverLoader(nullptr)
 	{
+	}
+
+	~Private()
+	{
+		if (driverLoader) {
+			delete driverLoader;
+		}
 	}
 };
 
@@ -60,6 +77,22 @@ Room::Room(Room &&source)
 	source.d = nullptr;
 }
 
+void Room::loadDriver(const std::string &driver_name)
+{
+	if (d->driverLoader) {
+		delete d->driverLoader;
+		d->driverLoader = nullptr;
+	}
+
+	d->driverLoader = new GameLoader(driver_name.c_str());
+	d->driver = d->driverLoader->driver();
+
+	if (d->driver) {
+		d->driver->setName(driver_name);
+		d->driver->setRoom(this);
+	}
+}
+
 const std::vector<User *> &Room::users() const
 {
 	return d->users;
@@ -68,6 +101,17 @@ const std::vector<User *> &Room::users() const
 void Room::addUser(User *user)
 {
 	user->setRoom(this);
+
+	if (!d->users.empty()) {
+		int new_uid = static_cast<int>(user->id());
+		JsonArray args;
+		for (User *existing : d->users) {
+			int uid = static_cast<int>(existing->id());
+			args.push_back(uid);
+			existing->notify(net::AddUser, new_uid);
+		}
+		user->notify(net::SetUserList, args);
+	}
 	d->users.push_back(user);
 }
 

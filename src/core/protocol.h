@@ -38,7 +38,12 @@ enum NetworkCommand
 	CreateRoom,
 	EnterRoom,
 
+	SetUserList,
+	AddUser,
+	RemoveUser,
+
 	Speak,
+	LoadGame,
 
 	NetworkCommandCount
 };
