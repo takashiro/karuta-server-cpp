@@ -42,6 +42,7 @@ public:
 		Null,
 		Boolean,
 		Integer,
+		UInteger,
 		Double,
 		String,
 		Array,
@@ -55,7 +56,10 @@ public:
 	Json(bool value);
 
 	//Number
-	Json(int value);
+	Json(int32 value);
+	Json(uint32 value);
+	Json(int64 value);
+	Json(uint64 value);
 	Json(double value);
 
 	//String
@@ -77,8 +81,9 @@ public:
 
 	Type type() const { return m_type; }
 	bool isNull() const { return m_type == Null; }
-	bool isNumber() const { return m_type == Integer || m_type == Double; }
+	bool isNumber() const { return m_type == Integer || m_type == UInteger || m_type == Double; }
 	bool isInteger() const { return m_type == Integer; }
+	bool isUInteger() const { return m_type == UInteger; }
 	bool isDouble() const { return m_type == Double; }
 	bool isString() const { return m_type == String; }
 	bool isArray() const { return m_type == Array; }
@@ -87,7 +92,10 @@ public:
 	bool toBool() const;
 
 	double toDouble() const;
-	int toInt() const;
+	int32 toInt() const;
+	uint32 toUInt() const;
+	int64 toInt64() const;
+	uint64 toUInt64() const;
 
 	std::string toString() const;
 
@@ -132,7 +140,8 @@ private:
 	union Value
 	{
 		bool boolean;
-		int inum;
+		int64 inum;
+		uint64 unum;
 		double dnum;
 		std::string *str;
 		JsonArray *array;

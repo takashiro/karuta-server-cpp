@@ -62,7 +62,7 @@ public:
 		ss << in;
 		Json out;
 		ss >> out;
-		assert(out.type() == Json::Integer);
+		assert(out.isNumber());
 		assert(number == out.toInt());
 	}
 
@@ -145,6 +145,41 @@ public:
 			Json json;
 			ss >> json;
 		}
+	}
+
+	TEST_METHOD(Int64Test)
+	{
+		int64 num = rand();
+		num <<= 32;
+		num |= rand();
+
+		Json json(num);
+		assert(json.isNumber());
+		assert(json.isInteger());
+
+		std::stringstream ss;
+		ss << json;
+		Json output;
+		ss >> output;
+		assert(output.toInt64() == num);
+	}
+
+	TEST_METHOD(UInt64Test)
+	{
+		uint64 num = rand();
+		num <<= 32;
+		num |= rand();
+		num |= 0x8000000000000000;
+
+		Json json(num);
+		assert(json.isNumber());
+		assert(json.isUInteger());
+
+		std::stringstream ss;
+		ss << json;
+		Json output;
+		ss >> output;
+		assert(output.toUInt64() == num);
 	}
 
 };

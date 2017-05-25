@@ -36,10 +36,28 @@ Json::Json(bool value)
 	m_value.boolean = value;
 }
 
-Json::Json(int value)
+Json::Json(int32 value)
 	: m_type(Integer)
 {
 	m_value.inum = value;
+}
+
+Json::Json(uint32 value)
+	: m_type(UInteger)
+{
+	m_value.unum = value;
+}
+
+Json::Json(int64 value)
+	: m_type(Integer)
+{
+	m_value.inum = value;
+}
+
+Json::Json(uint64 value)
+	: m_type(UInteger)
+{
+	m_value.unum = value;
 }
 
 Json::Json(double value)
@@ -145,17 +163,79 @@ double Json::toDouble() const
 	return 0.0;
 }
 
-int Json::toInt() const
+int32 Json::toInt() const
 {
 	if (m_type == Integer)
-		return m_value.inum;
+		return static_cast<int32>(m_value.inum);
+	else if (m_type == UInteger)
+		return static_cast<int32>(m_value.unum);
 	else if (m_type == Double)
-		return (int) m_value.dnum;
+		return static_cast<int32>(m_value.dnum);
 
 	if (m_type == String) {
 		std::stringstream s;
 		s << *(m_value.str);
-		int number;
+		int32 number;
+		s >> number;
+		return number;
+	}
+
+	return 0;
+}
+
+uint32 Json::toUInt() const
+{
+	if (m_type == Integer)
+		return static_cast<uint32>(m_value.inum);
+	else if (m_type == UInteger)
+		return static_cast<uint32>(m_value.unum);
+	else if (m_type == Double)
+		return static_cast<uint32>(m_value.dnum);
+
+	if (m_type == String) {
+		std::stringstream s;
+		s << *(m_value.str);
+		uint32 number;
+		s >> number;
+		return number;
+	}
+
+	return 0;
+}
+
+int64 Json::toInt64() const
+{
+	if (m_type == Integer)
+		return m_value.inum;
+	else if (m_type == UInteger)
+		return static_cast<int64>(m_value.unum);
+	else if (m_type == Double)
+		return static_cast<int64>(m_value.dnum);
+
+	if (m_type == String) {
+		std::stringstream s;
+		s << *(m_value.str);
+		int64 number;
+		s >> number;
+		return number;
+	}
+
+	return 0;
+}
+
+uint64 Json::toUInt64() const
+{
+	if (m_type == Integer)
+		return m_value.inum;
+	else if (m_type == UInteger)
+		return m_value.unum;
+	else if (m_type == Double)
+		return static_cast<int64>(m_value.dnum);
+
+	if (m_type == String) {
+		std::stringstream s;
+		s << *(m_value.str);
+		uint64 number;
 		s >> number;
 		return number;
 	}
@@ -177,6 +257,12 @@ std::string Json::toString() const
 	} else if (m_type == Integer) {
 		std::stringstream s;
 		s << m_value.inum;
+		std::string str;
+		s >> str;
+		return str;
+	} else if (m_type == UInteger) {
+		std::stringstream s;
+		s << m_value.unum;
 		std::string str;
 		s >> str;
 		return str;
@@ -351,14 +437,19 @@ std::istream &operator>>(std::istream &in, Json &json)
 		if (ch == '-' || (ch >= '0' && ch <= '9') || ch == '.') {
 			in.unget();
 			std::streamsize offset = in.tellg();
-			in >> json.m_value.inum;
+			bool negative = ch == '-';
+			if (negative) {
+				in >> json.m_value.inum;
+			} else {
+				in >> json.m_value.unum;
+			}
 			in.get(ch);
 			if (ch == '.' || ch == 'e') {
 				in.seekg(offset, std::ios::beg);
 				json.m_type = Json::Double;
 				in >> json.m_value.dnum;
 			} else {
-				json.m_type = Json::Integer;
+				json.m_type = negative ? Json::Integer : Json::UInteger;
 				in.unget();
 			}
 		} else if (ch == '[') {
@@ -432,7 +523,10 @@ std::ostream &operator<<(std::ostream &out, const Json &value)
 			out << "false";
 		break;
 	case Json::Integer:
-		out << value.toInt();
+		out << value.toInt64();
+		break;
+	case Json::UInteger:
+		out << value.toInt64();
 		break;
 	case Json::Double:
 		out << value.toDouble();
@@ -476,15 +570,6 @@ void Json::copy(const Json &source)
 {
 	m_type = source.type();
 	switch (m_type) {
-	case Json::Boolean:
-		m_value.boolean = source.m_value.boolean;
-		break;
-	case Json::Integer:
-		m_value.inum = source.m_value.inum;
-		break;
-	case Json::Double:
-		m_value.dnum = source.m_value.dnum;
-		break;
 	case Json::String:
 		m_value.str = new std::string(*source.m_value.str);
 		break;
@@ -495,6 +580,7 @@ void Json::copy(const Json &source)
 		m_value.object = new JsonObject(*source.m_value.object);
 		break;
 	default:
+		m_value = source.m_value;
 		break;
 	}
 }
