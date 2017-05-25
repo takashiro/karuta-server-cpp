@@ -103,16 +103,17 @@ void Room::addUser(User *user)
 	user->setRoom(this);
 
 	if (!d->users.empty()) {
-		int new_uid = static_cast<int>(user->id());
+		uint new_uid = user->id();
 		JsonArray args;
 		for (User *existing : d->users) {
-			int uid = static_cast<int>(existing->id());
-			args.push_back(uid);
+			args.push_back(existing->id());
 			existing->notify(net::AddUser, new_uid);
 		}
 		user->notify(net::SetUserList, args);
 	}
 	d->users.push_back(user);
+
+	user->notify(net::EnterRoom, d->id);
 }
 
 void Room::removeUser(User *user)
@@ -121,6 +122,7 @@ void Room::removeUser(User *user)
 		if (*iter == user) {
 			user->setRoom(nullptr);
 			d->users.erase(iter);
+			broadcastNotification(net::RemoveUser, user->id());
 			break;
 		}
 	}

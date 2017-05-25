@@ -42,8 +42,6 @@ public:
 	void setRoom(Room *room);
 	Room *room();
 
-	virtual const std::map<int, UserAction> *getUserActions() const = 0;
-
 	virtual void start() = 0;
 	virtual void end() = 0;
 
