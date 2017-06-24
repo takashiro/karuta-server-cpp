@@ -99,6 +99,9 @@
     <ClInclude Include="core\global.h">
       <Filter>core</Filter>
     </ClInclude>
+    <ClInclude Include="core\RoomConfig.h">
+      <Filter>core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="network">

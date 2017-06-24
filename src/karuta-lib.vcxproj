@@ -99,6 +99,7 @@
     <ClInclude Include="core\Packet.h" />
     <ClInclude Include="core\protocol.h" />
     <ClInclude Include="core\Room.h" />
+    <ClInclude Include="core\RoomConfig.h" />
     <ClInclude Include="core\Server.h" />
     <ClInclude Include="core\UserAction.h" />
     <ClInclude Include="core\User.h" />

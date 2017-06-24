@@ -49,6 +49,7 @@ struct Room::Private
 	Private()
 		: id(0)
 		, driverLoader(nullptr)
+		, driver(nullptr)
 	{
 	}
 
@@ -128,10 +129,26 @@ void Room::removeUser(User *user)
 	}
 }
 
+void Room::broadcastNotification(int command)
+{
+	for (User *user : d->users) {
+		user->notify(command);
+	}
+}
+
 void Room::broadcastNotification(int command, const Json &arguments)
 {
 	for (User *user : d->users) {
 		user->notify(command, arguments);
+	}
+}
+
+void Room::broadcastNotification(int command, const Json &arguments, User *except)
+{
+	for (User *user : d->users) {
+		if (user != except) {
+			user->notify(command, arguments);
+		}
 	}
 }
 

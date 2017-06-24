@@ -18,49 +18,12 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 takashiro@qq.com
 ************************************************************************/
 
-#include "GameDriver.h"
+#pragma once
 
-KA_NAMESPACE_BEGIN
+#include <string>
 
-struct GameDriver::Private
+struct RoomConfig
 {
 	std::string name;
-	Room *room;
-
-	Private()
-		: room(nullptr)
-	{
-	}
+	int capacity;
 };
-
-GameDriver::GameDriver()
-	: d(new Private)
-{
-}
-
-GameDriver::~GameDriver()
-{
-	delete d;
-}
-
-void GameDriver::setName(const std::string &name)
-{
-	d->name = name;
-}
-
-const std::string &GameDriver::name() const
-{
-	return d->name;
-}
-
-void GameDriver::setRoom(Room *room)
-{
-	d->room = room;
-}
-
-Room *GameDriver::room()
-{
-	return d->room;
-}
-
-KA_NAMESPACE_END

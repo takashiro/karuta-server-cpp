@@ -44,7 +44,9 @@ public:
 	void addUser(User *user);
 	void removeUser(User *user);
 
+	void broadcastNotification(int command);
 	void broadcastNotification(int command, const Json &arguments);
+	void broadcastNotification(int command, const Json &arguments, User *except);
 
 	void broadcastRequest(int command, const Json &arguments, int timeout = 0);
 	void broadcastRequest();
