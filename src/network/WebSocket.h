@@ -42,7 +42,7 @@ public:
 	WebSocket &operator<<(const std::string &message);
 
 	bool read(std::string &message);
-	bool write(const std::string &message, bool binary = true, bool masked = true);
+	bool write(const std::string &message, bool binary = true, bool masked = false);
 
 	bool isConnected() const;
 

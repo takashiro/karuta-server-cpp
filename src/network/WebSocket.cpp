@@ -281,7 +281,8 @@ bool WebSocket::read(std::string &message)
 	}
 
 	char mask[4];
-	if (header[1] & 0x80) {
+	bool masked = (header[1] & 0x80) != 0;
+	if (masked) {
 		rl = d->socket->read(mask, 4);
 		if (rl != 4) {
 			return false;
@@ -294,12 +295,14 @@ bool WebSocket::read(std::string &message)
 		return false;
 	}
 
-	int j = 0;
-	for (uint64 i = 0; i < payload_length; i++) {
-		data[i] ^= mask[j];
-		j++;
-		if (j == 4) {
-			j = 0;
+	if (masked) {
+		int j = 0;
+		for (uint64 i = 0; i < payload_length; i++) {
+			data[i] ^= mask[j];
+			j++;
+			if (j == 4) {
+				j = 0;
+			}
 		}
 	}
 
