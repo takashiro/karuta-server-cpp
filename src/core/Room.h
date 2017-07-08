@@ -39,6 +39,7 @@ public:
 	Room(const Room &room) = delete;
 
 	void loadDriver(const std::string &driver_name);
+	const std::string &driver() const;
 
 	const std::vector<User *> &users() const;
 	void addUser(User *user);

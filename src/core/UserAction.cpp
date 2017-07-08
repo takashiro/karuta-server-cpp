@@ -42,13 +42,15 @@ const std::map<int, UserAction> &BasicActions()
 		};
 
 		actions[net::Login] = [](User *user, const Json &args) {
+			uint uid = 0;
 			if (args.isObject() && args.contains("uid")) {
-				uint uid = args["uid"].toInt();
+				uid = args["uid"].toInt();
 				if (uid > 0) {
 					//TO-DO: verify login credentials
 					user->setId(uid);
 				}
 			}
+			user->notify(net::Login, uid);
 		};
 
 		actions[net::Logout] = [](User *user, const Json &args) {
@@ -56,10 +58,15 @@ const std::map<int, UserAction> &BasicActions()
 			if (room) {
 				room->removeUser(user);
 			}
+			user->notify(net::Logout);
 			user->disconnect();
 		};
 
 		actions[net::CreateRoom] = [](User *user, const Json &args) {
+			if (!user->isLoggedIn() || !args.isObject() || !args.contains("id") || !args.contains("game")) {
+				return;
+			}
+
 			Room *old_room = user->room();
 			if (old_room) {
 				old_room->removeUser(user);
@@ -76,20 +83,27 @@ const std::map<int, UserAction> &BasicActions()
 		};
 
 		actions[net::EnterRoom] = [](User *user, const Json &args) {
+			if (!user->isLoggedIn() || !args.isObject() || !args.contains("id") || !args.contains("game")) {
+				return;
+			}
+
 			Room *old_room = user->room();
 			if (old_room) {
 				old_room->removeUser(user);
 			}
 
+			uint room_id = args["id"].toUInt();
+			std::string game = args["game"].toString();
+
 			Server *server = user->server();
-			Room *new_room = server->findRoom(args.toInt());
-			if (new_room) {
+			Room *new_room = server->findRoom(room_id);
+			if (new_room && new_room->driver() == game) {
 				new_room->addUser(user);
 			}
 		};
 
 		actions[net::Speak] = [](User *user, const Json &message) {
-			if (!message.isString()) {
+			if (!user->isLoggedIn() || !message.isString()) {
 				return;
 			}
 			

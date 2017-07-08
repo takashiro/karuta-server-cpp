@@ -91,7 +91,15 @@ void Room::loadDriver(const std::string &driver_name)
 	if (d->driver) {
 		d->driver->setName(driver_name);
 		d->driver->setRoom(this);
+		d->driverName = driver_name;
+	} else {
+		d->driverName.clear();
 	}
+}
+
+const std::string &Room::driver() const
+{
+	return d->driverName;
 }
 
 const std::vector<User *> &Room::users() const
