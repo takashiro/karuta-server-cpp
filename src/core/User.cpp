@@ -155,25 +155,35 @@ void User::exec()
 
 void User::disconnect()
 {
-	d->socket->close();
+	if (d->socket) {
+		d->socket->close();
+	}
 }
 
 void User::notify(int command)
 {
-	std::stringstream message;
-	message << Packet(command);
-	d->socket->write(message.str());
+	if (d->socket) {
+		std::stringstream message;
+		message << Packet(command);
+		d->socket->write(message.str());
+	}
 }
 
 void User::notify(int command, const Json &arguments)
 {
-	std::stringstream message;
-	message << Packet(command, arguments);
-	d->socket->write(message.str());
+	if (d->socket) {
+		std::stringstream message;
+		message << Packet(command, arguments);
+		d->socket->write(message.str());
+	}
 }
 
 Json User::request(int command, const Json &arguments, int timeout)
 {
+	if (d->socket == nullptr) {
+		return Json();
+	}
+
 	Packet packet(command, arguments);
 	packet.timeout = timeout;
 	std::stringstream message;
@@ -195,9 +205,11 @@ Json User::request(int command, const Json &arguments, int timeout)
 
 void User::reply(int command, const Json &arguments)
 {
-	std::stringstream message;
-	message << Packet(command, arguments);
-	d->socket->write(message.str());
+	if (d->socket) {
+		std::stringstream message;
+		message << Packet(command, arguments);
+		d->socket->write(message.str());
+	}
 }
 
 void User::prepareRequest(int command, const Json &arguments, int timeout)
@@ -216,23 +228,35 @@ void User::prepareRequest(int command, const Json &arguments, int timeout)
 
 bool User::executeRequest(const std::function<void(const Json &)> &callback)
 {
-	d->replyCallback = callback;
-	d->socket->write(d->requestMessage);
-	return d->executeRequest();
+	if (d->socket) {
+		d->replyCallback = callback;
+		d->socket->write(d->requestMessage);
+		return d->executeRequest();
+	} else {
+		return false;
+	}
 }
 
 bool User::executeRequest(std::function<void(const Json &)> &&callback)
 {
-	d->replyCallback = std::move(callback);
-	d->socket->write(d->requestMessage);
-	return d->executeRequest();
+	if (d->socket) {
+		d->replyCallback = std::move(callback);
+		d->socket->write(d->requestMessage);
+		return d->executeRequest();
+	} else {
+		return false;
+	}
 }
 
 bool User::executeRequest()
 {
-	d->replyCallback = nullptr;
-	d->socket->write(d->requestMessage);
-	return d->executeRequest();
+	if (d->socket) {
+		d->replyCallback = nullptr;
+		d->socket->write(d->requestMessage);
+		return d->executeRequest();
+	} else {
+		return false;
+	}
 }
 
 Json User::getReply() const
