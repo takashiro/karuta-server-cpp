@@ -38,10 +38,12 @@ struct WebSocket::Private
 {
 	TcpSocket *socket;
 	bool activeClose;
+	WebSocket::Role role;
 
 	Private()
 		: socket(nullptr)
 		, activeClose(false)
+		, role(WebSocket::Server)
 	{
 	}
 
@@ -224,6 +226,16 @@ void WebSocket::close()
 	}
 }
 
+WebSocket::Role WebSocket::role() const
+{
+	return d->role;
+}
+
+void WebSocket::setRole(Role role)
+{
+	d->role = role;
+}
+
 WebSocket &WebSocket::operator>>(std::string &message)
 {
 	read(message);
@@ -232,7 +244,7 @@ WebSocket &WebSocket::operator>>(std::string &message)
 
 WebSocket &WebSocket::operator<<(const std::string &message)
 {
-	write(message, true, true);
+	write(message, true, d->role == Client);
 	return *this;
 }
 

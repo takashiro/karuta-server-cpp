@@ -30,6 +30,12 @@ class TcpSocket;
 
 class KA_DLL_EXPORT WebSocket
 {
+	enum Role
+	{
+		Server,
+		Client
+	};
+
 public:
 	WebSocket();
 	WebSocket(TcpSocket *socket);
@@ -37,6 +43,9 @@ public:
 
 	bool open(const HostAddress &ip, ushort port);
 	void close();
+
+	Role role() const;
+	void setRole(Role role);
 
 	WebSocket &operator>>(std::string &message);
 	WebSocket &operator<<(const std::string &message);
