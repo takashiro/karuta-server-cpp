@@ -30,7 +30,7 @@ takashiro@qq.com
 #define KA_NAMESPACE_BEGIN
 #define KA_NAMESPACE_END
 #define KA_USING_NAMESPACE
-#define KA_USING
+#define KA_USING(identifier)
 #define KA_IMPORT
 #endif // KA_NAMESPACE
 
@@ -80,3 +80,5 @@ typedef long long int64;
 typedef ullong uint64;
 
 KA_NAMESPACE_END
+
+#include <stddef.h>
