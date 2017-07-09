@@ -23,6 +23,10 @@ takashiro@qq.com
 
 #if defined(KA_OS_WIN)
 #include <Windows.h>
+#elif defined(KA_OS_LINUX)
+#include <dlfcn.h>
+#else
+#error "Unsupported operating system."
 #endif
 
 KA_NAMESPACE_BEGIN
@@ -32,6 +36,8 @@ struct GameLoader::Private
 	GameDriver *driver;
 #if defined(KA_OS_WIN)
 	HMODULE dll;
+#elif defined(KA_OS_LINUX)
+	void *dll;
 #endif
 
 	Private()
@@ -53,12 +59,18 @@ GameLoader::GameLoader(const char *name)
 	d->dll = LoadLibrary(module_path);
 	delete[] module_path;
 # else
-	HMODULE d->extension = LoadLibrary(name);
+	d->dll = LoadLibrary(name);
 # endif //UNICODE
+#elif defined(KA_OS_LINUX)
+	d->dll = dlopen(name, RTLD_LAZY);
 #endif
 
 	using Loader = GameDriver *(*)();
+#if defined(KA_OS_WIN)
 	Loader loader = reinterpret_cast<Loader>(GetProcAddress(d->dll, "LoadGameDriver"));
+#elif defined(KA_OS_LINUX)
+	Loader loader = reinterpret_cast<Loader>(dlsym(d->dll, "LoadGameDriver"));
+#endif
 	if (loader) {
 		d->driver = loader();
 	}
@@ -70,7 +82,11 @@ GameLoader::~GameLoader()
 		delete d->driver;
 	}
 	if (d->dll) {
+#if defined(KA_OS_WIN)
 		FreeLibrary(d->dll);
+#elif defined(KA_OS_LINUX)
+		dlclose(d->dll);
+#endif
 	}
 	delete d;
 }

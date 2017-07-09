@@ -23,6 +23,7 @@ takashiro@qq.com
 #include "global.h"
 
 #include <vector>
+#include <string>
 
 KA_NAMESPACE_BEGIN
 

@@ -224,7 +224,7 @@ User *Room::broadcastRacingRequest(const std::vector<User *> &users, int timeout
 	} else {
 		replied.acquire();
 		std::unique_lock<std::mutex> lock(*requestMutex);
-		requesting = false;
+		*requesting = false;
 		return winner;
 	}
 

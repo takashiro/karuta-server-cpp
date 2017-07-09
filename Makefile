@@ -2,6 +2,7 @@
 # Configurations #
 
 TARGET = karuta-server
+TARGETLIB = libkaruta.so
 
 SOURCEDIR = \
 	src/core \
@@ -11,10 +12,11 @@ SOURCEDIR = \
 
 INCLUDEPATH = $(SOURCEDIR) include
 
-SOURCES = $(foreach dir,$(SOURCEDIR),$(wildcard $(dir)/*.cpp))
+SOURCES = src/main.cpp src/core/Application.cpp
+LIBSOURCES = $(filter-out $(SOURCES), $(foreach dir,$(SOURCEDIR),$(wildcard $(dir)/*.cpp)))
 
 CPPFLAGS = -std=c++11 -fexceptions -pthread -Wall
-LFLAGS = -lpthread
+LFLAGS = -lpthread -ldl
 
 BUILDCONFIG = release
 
@@ -28,21 +30,30 @@ BINDIR = bin/$(BUILDCONFIG)
 OBJDIR = obj/$(BUILDCONFIG)
 LIBDIR = lib/$(BUILDCONFIG)
 
+EXECFLAGS = -L"$(BINDIR)" -lkaruta -Wl,-rpath='$$ORIGIN'
+
 # Build Target #
 
 OBJECTS = $(addprefix $(OBJDIR)/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))))
+LIBOBJECTS = $(addprefix $(OBJDIR)/, $(addsuffix .o, $(basename $(notdir $(LIBSOURCES)))))
 
 vpath %.cpp $(INCLUDEPATH)
 vpath %.h $(INCLUDEPATH)
 
 CCPARAM = $(CPPFLAGS) $(addprefix -I,$(INCLUDEPATH))
 
-$(BINDIR)/$(TARGET): $(OBJECTS) | $(BINDIR)
-	$(CXX) -o $(BINDIR)/$(TARGET) $(wildcard $(OBJDIR)/*.o) $(LFLAGS)
+$(BINDIR)/$(TARGET): $(OBJECTS) | $(BINDIR)/$(TARGETLIB)
+	$(CXX) -o $(BINDIR)/$(TARGET) $(OBJECTS) $(LFLAGS) $(EXECFLAGS)
+
+$(BINDIR)/$(TARGETLIB): $(LIBOBJECTS) | $(BINDIR)
+	$(CXX) -shared -o $(BINDIR)/$(TARGETLIB) $(LIBOBJECTS) $(LFLAGS)
 
 .SECONDEXPANSION:
 $(OBJECTS): $$(addsuffix .cpp,$$(basename $$(notdir $$@))) | $(OBJDIR)
 	$(CXX) -o $@ -c $(filter %/$(addsuffix .cpp,$(basename $(notdir $@))),$(SOURCES)) $(CCPARAM)
+
+$(LIBOBJECTS): $$(addsuffix .cpp,$$(basename $$(notdir $$@))) | $(OBJDIR)
+	$(CXX) -o $@ -c $(filter %/$(addsuffix .cpp,$(basename $(notdir $@))),$(LIBSOURCES)) $(CCPARAM) -fPIC
 
 $(BINDIR):
 	mkdir -p $(BINDIR)
@@ -66,8 +77,8 @@ TESTOBJECTS = $(addprefix $(OBJDIR)/unittest/, $(addsuffix .o, $(basename $(notd
 test: $(BINDIR)/unittest
 	./$(BINDIR)/unittest
 
-$(BINDIR)/unittest: $(OBJECTS) $(TESTOBJECTS) | $(BINDIR)
-	$(CXX) -o $(BINDIR)/unittest $(filter-out %main.o, $(OBJECTS)) $(TESTOBJECTS) $(LFLAGS)
+$(BINDIR)/unittest: $(TESTOBJECTS) | $(BINDIR)/$(TARGETLIB)
+	$(CXX) -o $(BINDIR)/unittest $(TESTOBJECTS) $(LFLAGS) $(EXECFLAGS)
 
 $(TESTOBJECTS): $$(addprefix $(OBJDIR)/prep/unittest/, $$(addsuffix .cpp, $$(basename $$(notdir $$@)))) | $(OBJDIR)/unittest
 	$(CXX) -o $@ -c $(addprefix $(OBJDIR)/prep/unittest/, $(addsuffix .cpp, $(basename $(notdir $@)))) $(CCPARAM) -Itest
@@ -79,4 +90,5 @@ $(OBJDIR)/unittest:
 	mkdir -p $(OBJDIR)/unittest
 
 $(OBJDIR)/prep/unittest:
+	chmod +x test/prep.sh
 	mkdir -p $(OBJDIR)/prep/unittest
