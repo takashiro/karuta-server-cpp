@@ -22,6 +22,7 @@ takashiro@qq.com
 
 #include "global.h"
 
+#include <functional>
 #include <vector>
 #include <string>
 
@@ -38,6 +39,9 @@ public:
 
 	Room(Room &&source);
 	Room(const Room &room) = delete;
+
+	User *owner() const;
+	void setOwner(User *user);
 
 	void loadDriver(const std::string &driver_name);
 	const std::string &driver() const;
@@ -57,6 +61,8 @@ public:
 	User *broadcastRacingRequest(int command, const Json &arguments, int timeout = 0);
 	User *broadcastRacingRequest(int timeout = 0);
 	User *broadcastRacingRequest(const std::vector<User *> &users, int timeout = 0);
+
+	void onAbandon(const std::function<void()> &handler);
 
 private:
 	KA_DECLARE_PRIVATE

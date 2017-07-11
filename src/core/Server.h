@@ -46,6 +46,10 @@ public:
 
 	User *next();
 
+	void addUser(User *user);
+	void removeUser(uint id);
+	User *findUser(uint id);
+
 private:
 	KA_DECLARE_PRIVATE
 };

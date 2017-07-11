@@ -32,6 +32,7 @@ KA_NAMESPACE_BEGIN
 struct Server::Private
 {
 	std::map<uint, Room *> rooms;
+	std::map<uint, User *> users;
 	TcpServer socket;
 };
 
@@ -49,7 +50,7 @@ Server::~Server()
 	delete d;
 }
 
-bool Server::listen(const HostAddress & ip, ushort port)
+bool Server::listen(const HostAddress &ip, ushort port)
 {
 	return d->socket.listen(ip, port);
 }
@@ -77,6 +78,11 @@ Room *Server::createRoom(uint id)
 	}
 	room = new Room(id);
 	d->rooms[id] = room;
+
+	room->onAbandon([this, id] () {
+		d->rooms.erase(id);
+	});
+
 	return room;
 }
 
@@ -89,6 +95,11 @@ Room *Server::createRoom(uint id, const std::string &driver)
 	room = new Room(id);
 	room->loadDriver(driver);
 	d->rooms[id] = room;
+
+	room->onAbandon([this,id] () {
+		d->rooms.erase(id);
+	});
+
 	return room;
 }
 
@@ -110,6 +121,31 @@ User *Server::next()
 		User *user = new User(websocket);
 		user->setServer(this);
 		return user;
+	} else {
+		return nullptr;
+	}
+}
+
+void Server::addUser(User *user)
+{
+	if (user->id() > 0) {
+		d->users[user->id()] = user;
+	}
+}
+
+void Server::removeUser(uint id)
+{
+	auto iter = d->users.find(id);
+	if (iter != d->users.end()) {
+		d->users.erase(iter);
+	}
+}
+
+User *Server::findUser(uint id)
+{
+	auto iter = d->users.find(id);
+	if (iter != d->users.end()) {
+		return iter->second;
 	} else {
 		return nullptr;
 	}

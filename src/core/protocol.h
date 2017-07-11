@@ -37,6 +37,7 @@ enum NetworkCommand
 
 	CreateRoom,
 	EnterRoom,
+	UpdateRoom,
 
 	SetUserList,
 	AddUser,

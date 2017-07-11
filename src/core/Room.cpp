@@ -40,14 +40,17 @@ KA_NAMESPACE_BEGIN
 struct Room::Private
 {
 	uint id;
+	User *owner;
 	std::vector<User *> users;
 
 	std::string driverName;
 	GameLoader *driverLoader;
 	GameDriver *driver;
+	std::function<void()> abandonHandler;
 
 	Private()
 		: id(0)
+		, owner(nullptr)
 		, driverLoader(nullptr)
 		, driver(nullptr)
 	{
@@ -57,6 +60,13 @@ struct Room::Private
 	{
 		if (driverLoader) {
 			delete driverLoader;
+		}
+	}
+
+	void abandoned()
+	{
+		if (abandonHandler) {
+			abandonHandler();
 		}
 	}
 };
@@ -76,6 +86,16 @@ Room::Room(Room &&source)
 	: d(source.d)
 {
 	source.d = nullptr;
+}
+
+User *Room::owner() const
+{
+	return d->owner;
+}
+
+void Room::setOwner(User *user)
+{
+	d->owner = user;
 }
 
 void Room::loadDriver(const std::string &driver_name)
@@ -122,7 +142,10 @@ void Room::addUser(User *user)
 	}
 	d->users.push_back(user);
 
-	user->notify(net::EnterRoom, d->id);
+	JsonObject info;
+	info["room_id"] = d->id;
+	info["owner_id"] = d->owner ? d->owner->id() : 0;
+	user->notify(net::EnterRoom, info);
 }
 
 void Room::removeUser(User *user)
@@ -133,6 +156,20 @@ void Room::removeUser(User *user)
 			d->users.erase(iter);
 			broadcastNotification(net::RemoveUser, user->id());
 			break;
+		}
+	}
+
+	if (user == d->owner) {
+		if (d->users.empty()) {
+			setOwner(nullptr);
+			d->abandoned();
+		} else {
+			User *owner = d->users.front();
+			setOwner(owner);
+
+			JsonObject info;
+			info["owner_id"] = owner->id();
+			broadcastNotification(net::UpdateRoom, info);
 		}
 	}
 }
@@ -231,6 +268,11 @@ User *Room::broadcastRacingRequest(const std::vector<User *> &users, int timeout
 	std::unique_lock<std::mutex> lock(*requestMutex);
 	*requesting = false;
 	return nullptr;
+}
+
+void Room::onAbandon(const std::function<void()> &handler)
+{
+	d->abandonHandler = handler;
 }
 
 KA_NAMESPACE_END

@@ -30,6 +30,20 @@ takashiro@qq.com
 
 KA_NAMESPACE_BEGIN
 
+static void user_logout(User *user, const Json &args)
+{
+	Room *room = user->room();
+	if (room) {
+		room->removeUser(user);
+	}
+	Server *server = user->server();
+	if (server) {
+		server->removeUser(user->id());
+	}
+	user->notify(net::Logout);
+	user->disconnect();
+};
+
 const std::map<int, UserAction> &BasicActions()
 {
 	static std::map<int, UserAction> actions;
@@ -48,19 +62,19 @@ const std::map<int, UserAction> &BasicActions()
 				if (uid > 0) {
 					//TO-DO: verify login credentials
 					user->setId(uid);
+
+					Server *server = user->server();
+					User *existed = server->findUser(uid);
+					if (existed) {
+						user_logout(existed, Json());
+					}
+					server->addUser(user);
 				}
 			}
 			user->notify(net::Login, uid);
 		};
 
-		actions[net::Logout] = [](User *user, const Json &args) {
-			Room *room = user->room();
-			if (room) {
-				room->removeUser(user);
-			}
-			user->notify(net::Logout);
-			user->disconnect();
-		};
+		actions[net::Logout] = user_logout;
 
 		actions[net::CreateRoom] = [](User *user, const Json &args) {
 			if (!user->isLoggedIn() || !args.isObject() || !args.contains("id") || !args.contains("game")) {
@@ -78,6 +92,9 @@ const std::map<int, UserAction> &BasicActions()
 			Server *server = user->server();
 			Room *new_room = server->createRoom(room_id, room_game);
 			if (new_room) {
+				if (new_room->owner() == nullptr) {
+					new_room->setOwner(user);
+				}
 				new_room->addUser(user);
 			}
 		};
