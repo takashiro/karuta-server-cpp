@@ -35,6 +35,9 @@ enum NetworkCommand
 	Login,
 	Logout,
 
+	RequestRoomId,
+	RequestUserId,
+
 	CreateRoom,
 	EnterRoom,
 	UpdateRoom,

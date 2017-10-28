@@ -55,6 +55,34 @@ const std::map<int, UserAction> &BasicActions()
 			// Check Version
 		};
 
+		actions[net::RequestRoomId] = [] (User *user, const Json &) {
+			int id = 0;
+			Server *server = user->server();
+			for (int i = 0; i < 5; i++) {
+				id = std::rand() % 1000;
+				if (server->findRoom(id)) {
+					id = 0;
+				} else {
+					break;
+				}
+			}
+			user->notify(net::RequestRoomId, id);
+		};
+
+		actions[net::RequestUserId] = [] (User *user, const Json &) {
+			int id = 0;
+			Server *server = user->server();
+			for (int i = 0; i < 5; i++) {
+				id = std::rand();
+				if (server->findUser(id)) {
+					id = 0;
+				} else {
+					break;
+				}
+			}
+			user->notify(net::RequestUserId, id);
+		};
+
 		actions[net::Login] = [](User *user, const Json &args) {
 			uint uid = 0;
 			if (args.isObject() && args.contains("uid")) {
@@ -96,6 +124,8 @@ const std::map<int, UserAction> &BasicActions()
 					new_room->setOwner(user);
 				}
 				new_room->addUser(user);
+			} else {
+				user->notify(net::CreateRoom, 0);
 			}
 		};
 
