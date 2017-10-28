@@ -43,7 +43,7 @@ public:
 	User *owner() const;
 	void setOwner(User *user);
 
-	void loadDriver(const std::string &driver_name);
+	bool loadDriver(const std::string &driver_name);
 	const std::string &driver() const;
 
 	const std::vector<User *> &users() const;

@@ -93,14 +93,18 @@ Room *Server::createRoom(uint id, const std::string &driver)
 		return room;
 	}
 	room = new Room(id);
-	room->loadDriver(driver);
-	d->rooms[id] = room;
+	if (room && room->loadDriver(driver)) {
+		d->rooms[id] = room;
 
-	room->onAbandon([this,id] () {
-		d->rooms.erase(id);
-	});
+		room->onAbandon([this, id] () {
+			d->rooms.erase(id);
+		});
 
-	return room;
+		return room;
+	} else {
+		delete room;
+		return nullptr;
+	}
 }
 
 Room *Server::findRoom(uint id)

@@ -98,7 +98,7 @@ void Room::setOwner(User *user)
 	d->owner = user;
 }
 
-void Room::loadDriver(const std::string &driver_name)
+bool Room::loadDriver(const std::string &driver_name)
 {
 	if (d->driverLoader) {
 		delete d->driverLoader;
@@ -112,8 +112,10 @@ void Room::loadDriver(const std::string &driver_name)
 		d->driver->setName(driver_name);
 		d->driver->setRoom(this);
 		d->driverName = driver_name;
+		return true;
 	} else {
 		d->driverName.clear();
+		return false;
 	}
 }
 
