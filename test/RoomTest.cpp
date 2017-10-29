@@ -35,6 +35,7 @@ namespace UnitTest
 
 		TEST_METHOD(RacingRequestTest)
 		{
+			const int ACTION_ID = 1001;
 			ushort port = static_cast<ushort>(rand(1000, 0xFFFF));
 			Server server;
 			assert(server.listen(HostAddress::Any, port));
@@ -57,7 +58,7 @@ namespace UnitTest
 					JsonArray args;
 					args.push_back(i);
 					args.push_back(i);
-					users[i]->prepareRequest(10, args, 1);
+					users[i]->prepareRequest(ACTION_ID, args, 1);
 				}
 
 				User *winner = room.broadcastRacingRequest(5);
@@ -76,13 +77,13 @@ namespace UnitTest
 			});
 
 			std::map<int, User::Action> actions;
-			actions[10] = [](User *user, const Json &arguments) {
+			actions[ACTION_ID] = [ACTION_ID](User *user, const Json &arguments) {
 				int wait = arguments[0].toInt();
 				int num = arguments[1].toInt();
 				if (wait > 0) {
 					std::this_thread::sleep_for(std::chrono::milliseconds(wait * 100));
 				}
-				user->reply(10, num + 1);
+				user->reply(ACTION_ID, num + 1);
 			};
 
 			std::vector<std::thread> user_threads;
