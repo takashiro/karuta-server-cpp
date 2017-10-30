@@ -24,6 +24,7 @@ takashiro@qq.com
 #include "UserAction.h"
 
 #include <string>
+#include <map>
 
 KA_NAMESPACE_BEGIN
 
@@ -42,11 +43,16 @@ public:
 	void setRoom(Room *room);
 	Room *room();
 
+	virtual void setConfig(const Json &arg) = 0;
+	virtual const Json &config() const = 0;
+
 	virtual void start() = 0;
 	virtual void end() = 0;
 
 	virtual void addPlayer(User *user) = 0;
 	virtual void removePlayer(User *user) = 0;
+
+	virtual const std::map<int, UserAction> *actions() const = 0;
 
 protected:
 	KA_DECLARE_PRIVATE

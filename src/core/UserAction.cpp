@@ -151,6 +151,25 @@ static std::map<int, UserAction> CreateActions()
 		}
 	};
 
+	actions[net::UpdateRoom] = [] (User *user, const Json &args) {
+		if (!user->isLoggedIn()) {
+			return;
+		}
+
+		Room *room = user->room();
+		if (room == nullptr || room->owner() != user) {
+			return;
+		}
+
+		GameDriver *driver = room->driver();
+		if (driver) {
+			driver->setConfig(args);
+
+			const Json &new_config = driver->config();
+			room->broadcastNotification(net::UpdateRoom, new_config);
+		}
+	};
+
 	actions[net::Speak] = [] (User *user, const Json &message) {
 		if (!user->isLoggedIn() || !message.isString()) {
 			return;
