@@ -147,6 +147,7 @@ static std::map<int, UserAction> CreateActions()
 			GameDriver *driver = new_room->driver();
 			if (driver && driver->name() == game) {
 				new_room->addUser(user);
+				user->notify(net::UpdateRoom, driver->config());
 			}
 		}
 	};
