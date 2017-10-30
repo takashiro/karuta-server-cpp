@@ -43,7 +43,6 @@ struct Room::Private
 	User *owner;
 	std::vector<User *> users;
 
-	std::string driverName;
 	GameLoader *driverLoader;
 	GameDriver *driver;
 	std::function<void()> abandonHandler;
@@ -111,17 +110,15 @@ bool Room::loadDriver(const std::string &driver_name)
 	if (d->driver) {
 		d->driver->setName(driver_name);
 		d->driver->setRoom(this);
-		d->driverName = driver_name;
 		return true;
 	} else {
-		d->driverName.clear();
 		return false;
 	}
 }
 
-const std::string &Room::driver() const
+GameDriver *Room::driver() const
 {
-	return d->driverName;
+	return d->driver;
 }
 
 const std::vector<User *> &Room::users() const

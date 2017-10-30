@@ -33,6 +33,7 @@ struct User::Private
 {
 	WebSocket *socket;
 	const std::map<int, UserAction> *actions;
+	const std::map<int, UserAction> *extraActions;
 
 	int replyCommand;
 	Semaphore replySem;
@@ -49,6 +50,7 @@ struct User::Private
 	Private()
 		: socket(nullptr)
 		, actions(nullptr)
+		, extraActions(nullptr)
 		, replySem(0)
 		, id(0)
 		, room(nullptr)
@@ -113,6 +115,11 @@ void User::setAction(const std::map<int, UserAction> *actions)
 	d->actions = actions;
 }
 
+void User::setExtraAction(const std::map<int, UserAction> *actions)
+{
+	d->extraActions = actions;
+}
+
 void User::exec()
 {
 	if (d->socket == nullptr) {
@@ -145,10 +152,17 @@ void User::exec()
 		if (d->actions == nullptr) {
 			break;
 		}
+
 		auto i = d->actions->find(packet.command);
 		if (i != d->actions->end()) {
 			UserAction behavior = i->second;
 			behavior(this, packet.arguments);
+		} else if (d->extraActions != nullptr) {
+			i = d->extraActions->find(packet.command);
+			if (i != d->extraActions->end()) {
+				UserAction behavior = i->second;
+				behavior(this, packet.arguments);
+			}
 		}
 	}
 }

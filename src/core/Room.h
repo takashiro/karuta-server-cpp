@@ -28,6 +28,7 @@ takashiro@qq.com
 
 KA_NAMESPACE_BEGIN
 
+class GameDriver;
 class Json;
 class User;
 
@@ -44,7 +45,7 @@ public:
 	void setOwner(User *user);
 
 	bool loadDriver(const std::string &driver_name);
-	const std::string &driver() const;
+	GameDriver *driver() const;
 
 	const std::vector<User *> &users() const;
 	void addUser(User *user);

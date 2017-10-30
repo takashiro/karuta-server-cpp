@@ -45,6 +45,7 @@ public:
 
 	using Action = UserAction;
 	void setAction(const std::map<int, Action> *handlers);
+	void setExtraAction(const std::map<int, Action> *handlers);
 	void exec();
 
 	void disconnect();
