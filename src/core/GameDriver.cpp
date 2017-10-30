@@ -20,15 +20,19 @@ takashiro@qq.com
 
 #include "GameDriver.h"
 
+#include <thread>
+
 KA_NAMESPACE_BEGIN
 
 struct GameDriver::Private
 {
 	std::string name;
 	Room *room;
+	std::thread *thread;
 
 	Private()
 		: room(nullptr)
+		, thread(nullptr)
 	{
 	}
 };
@@ -61,6 +65,22 @@ void GameDriver::setRoom(Room *room)
 Room *GameDriver::room()
 {
 	return d->room;
+}
+
+void GameDriver::wait()
+{
+	if (d->thread) {
+		d->thread->join();
+		delete d->thread;
+		d->thread = nullptr;
+	}
+}
+
+void GameDriver::start()
+{
+	d->thread = new std::thread([this] () {
+		run();
+	});
 }
 
 KA_NAMESPACE_END

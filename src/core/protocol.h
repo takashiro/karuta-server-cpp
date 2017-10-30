@@ -47,7 +47,7 @@ enum NetworkCommand
 	RemoveUser,
 
 	Speak,
-	LoadGame,
+	StartGame,
 
 	NetworkCommandCount
 };

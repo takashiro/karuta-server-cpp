@@ -185,6 +185,22 @@ static std::map<int, UserAction> CreateActions()
 		}
 	};
 
+	actions[net::StartGame] = [] (User *user, const Json &) {
+		if (!user->isLoggedIn()) {
+			return;
+		}
+
+		Room *room = user->room();
+		if (room == nullptr || room->owner() != user) {
+			return;
+		}
+
+		GameDriver *driver = room->driver();
+		if (driver) {
+			driver->start();
+		}
+	};
+
 	return actions;
 }
 

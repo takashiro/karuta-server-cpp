@@ -43,10 +43,13 @@ public:
 	void setRoom(Room *room);
 	Room *room();
 
+	void wait();
+
 	virtual void setConfig(const Json &arg) = 0;
 	virtual const Json &config() const = 0;
 
-	virtual void start() = 0;
+	virtual void start();
+	virtual void run() = 0;
 	virtual void end() = 0;
 
 	virtual void addPlayer(User *user) = 0;
