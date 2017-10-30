@@ -129,17 +129,18 @@ const std::vector<User *> &Room::users() const
 void Room::addUser(User *user)
 {
 	user->setRoom(this);
-
-	if (!d->users.empty()) {
-		uint new_uid = user->id();
-		JsonArray args;
-		for (User *existing : d->users) {
-			args.push_back(existing->id());
-			existing->notify(net::AddUser, new_uid);
-		}
-		user->notify(net::SetUserList, args);
-	}
 	d->users.push_back(user);
+
+	uint new_uid = user->id();
+	JsonArray args;
+	for (User *existing : d->users) {
+		if (existing == user) {
+			continue;
+		}
+		args.push_back(existing->id());
+		existing->notify(net::AddUser, new_uid);
+	}
+	user->notify(net::SetUserList, args);
 
 	JsonObject info;
 	info["room_id"] = d->id;
@@ -171,6 +172,16 @@ void Room::removeUser(User *user)
 			broadcastNotification(net::UpdateRoom, info);
 		}
 	}
+}
+
+User *Room::findUser(uint id) const
+{
+	for (User *user : d->users) {
+		if (user->id() == id) {
+			return user;
+		}
+	}
+	return nullptr;
 }
 
 void Room::broadcastNotification(int command)

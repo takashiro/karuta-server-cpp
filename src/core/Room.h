@@ -50,6 +50,7 @@ public:
 	const std::vector<User *> &users() const;
 	void addUser(User *user);
 	void removeUser(User *user);
+	User *findUser(uint id) const;
 
 	void broadcastNotification(int command);
 	void broadcastNotification(int command, const Json &arguments);

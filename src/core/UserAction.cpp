@@ -119,6 +119,10 @@ static std::map<int, UserAction> CreateActions()
 		Server *server = user->server();
 		Room *new_room = server->createRoom(room_id, room_game);
 		if (new_room) {
+			GameDriver *driver = new_room->driver();
+			if (driver) {
+				user->setExtraAction(driver->actions());
+			}
 			if (new_room->owner() == nullptr) {
 				new_room->setOwner(user);
 			}
@@ -136,6 +140,7 @@ static std::map<int, UserAction> CreateActions()
 		Room *old_room = user->room();
 		if (old_room) {
 			old_room->removeUser(user);
+			user->setExtraAction(nullptr);
 		}
 
 		uint room_id = args["id"].toUInt();
@@ -146,6 +151,7 @@ static std::map<int, UserAction> CreateActions()
 		if (new_room) {
 			GameDriver *driver = new_room->driver();
 			if (driver && driver->name() == game) {
+				user->setExtraAction(driver->actions());
 				new_room->addUser(user);
 				user->notify(net::UpdateRoom, driver->config());
 			}
