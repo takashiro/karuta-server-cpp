@@ -202,8 +202,13 @@ static std::map<int, UserAction> CreateActions()
 			return;
 		}
 
+		room->broadcastNotification(net::StartGame);
 		GameDriver *driver = room->driver();
 		if (driver) {
+			const std::vector<User *> &users = room->users();
+			for (User *user : users) {
+				driver->addPlayer(user);
+			}
 			driver->start();
 		}
 	};
