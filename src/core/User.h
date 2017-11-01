@@ -57,9 +57,11 @@ public:
 	void reply(int command, const Json &arguments);
 
 	void prepareRequest(int command, const Json &arguments, int timeout = 0);
-	bool executeRequest(const std::function<void(const Json &)> &callback);
-	bool executeRequest(std::function<void(const Json &)> &&callback);
-	bool executeRequest();
+	void executeRequest(const std::function<void(const Json &)> &callback);
+	void executeRequest(std::function<void(const Json &)> &&callback);
+	void executeRequest();
+
+	Json waitForReply() const;
 	Json getReply() const;
 
 	uint id() const;

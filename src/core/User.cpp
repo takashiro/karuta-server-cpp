@@ -66,7 +66,7 @@ struct User::Private
 		}
 	}
 
-	bool executeRequest()
+	bool waitForReply()
 	{
 		if (requestTimeout > 0) {
 			return replySem.acquire(1, requestTimeout);
@@ -240,36 +240,32 @@ void User::prepareRequest(int command, const Json &arguments, int timeout)
 	d->replyCommand = command;
 }
 
-bool User::executeRequest(const std::function<void(const Json &)> &callback)
+void User::executeRequest(const std::function<void(const Json &)> &callback)
 {
 	if (d->socket) {
 		d->replyCallback = callback;
 		d->socket->write(d->requestMessage);
-		return d->executeRequest();
-	} else {
-		return false;
 	}
 }
 
-bool User::executeRequest(std::function<void(const Json &)> &&callback)
+void User::executeRequest(std::function<void(const Json &)> &&callback)
 {
-	if (d->socket) {
-		d->replyCallback = std::move(callback);
-		d->socket->write(d->requestMessage);
-		return d->executeRequest();
-	} else {
-		return false;
-	}
+	d->replyCallback = std::move(callback);
+	d->socket->write(d->requestMessage);
 }
 
-bool User::executeRequest()
+void User::executeRequest()
 {
-	if (d->socket) {
-		d->replyCallback = nullptr;
-		d->socket->write(d->requestMessage);
-		return d->executeRequest();
+	d->replyCallback = nullptr;
+	d->socket->write(d->requestMessage);
+}
+
+Json User::waitForReply() const
+{
+	if (d->waitForReply()) {
+		return d->reply;
 	} else {
-		return false;
+		return Json();
 	}
 }
 

@@ -226,6 +226,10 @@ void Room::broadcastRequest(const std::vector<User *> &users)
 	for (User *user : users) {
 		user->executeRequest();
 	}
+
+	for (User *user : users) {
+		user->waitForReply();
+	}
 }
 
 User *Room::broadcastRacingRequest(int command, const Json &arguments, int timeout)
