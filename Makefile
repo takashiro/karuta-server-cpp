@@ -92,3 +92,11 @@ $(OBJDIR)/unittest:
 $(OBJDIR)/prep/unittest:
 	chmod +x test/prep.sh
 	mkdir -p $(OBJDIR)/prep/unittest
+
+install:
+	chmod +x sh/install.sh
+	./sh/install.sh
+
+uninstall:
+	chmod +x sh/uninstall.sh
+	./sh/uninstall.sh
