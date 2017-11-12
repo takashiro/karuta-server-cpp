@@ -38,6 +38,8 @@ public:
 	Room(uint id);
 	~Room();
 
+	uint id() const;
+
 	Room(Room &&source);
 	Room(const Room &room) = delete;
 

@@ -87,6 +87,11 @@ Room::Room(Room &&source)
 	source.d = nullptr;
 }
 
+uint Room::id() const
+{
+	return d->id;
+}
+
 User *Room::owner() const
 {
 	return d->owner;
