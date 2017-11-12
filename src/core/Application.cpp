@@ -38,18 +38,34 @@ takashiro@qq.com
 #include <Winsock2.h>
 #endif // KA_OS_WIN
 
+#ifdef KA_OS_LINUX
+#include <signal.h>
+#endif // KA_OS_LINUX
 
 KA_NAMESPACE_BEGIN
+
+#ifdef KA_OS_LINUX
+static Server *AppServer = nullptr;
+
+static void on_sigterm(int sig)
+{
+	if (AppServer) {
+		AppServer->close();
+	}
+}
+#endif
 
 struct Application::Private
 {
 	Server server;
 	int maxUserNum;
 	ushort serverPort;
+	bool isInteractive;
 
 	Private()
 		: maxUserNum(2)
 		, serverPort(2610)
+		, isInteractive(true)
 	{
 	}
 };
@@ -72,6 +88,8 @@ Application::Application(int argc, const char *argv[])
 				ss << argv[i];
 				ss >> d->serverPort;
 			}
+		} else if (strcmp(argv[i], "-s") == 0 || strcmp(argv[i], "--service") == 0) {
+			d->isInteractive = false;
 		}
 	}
 
@@ -117,12 +135,19 @@ int Application::exec()
 		}
 	});
 
-	std::string command;
-	while (std::cin >> command) {
-		//TO-DO: Execute command
+	if (d->isInteractive) {
+		std::string command;
+		while (std::cin >> command) {
+			//TO-DO: Execute command
+		}
+
+		d->server.close();
+	} else {
+		#ifdef KA_OS_LINUX
+		AppServer = &d->server;
+		signal(SIGTERM, on_sigterm);
+		#endif
 	}
-	
-	d->server.close();
 
 	daemon.join();
 	for (std::thread &listener : listeners) {
