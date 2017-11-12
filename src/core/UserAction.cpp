@@ -25,6 +25,7 @@ takashiro@qq.com
 #include "protocol.h"
 #include "Room.h"
 #include "Server.h"
+#include "Semaphore.h"
 #include "User.h"
 
 #include <fstream>
@@ -55,30 +56,46 @@ static std::map<int, UserAction> CreateActions()
 	};
 
 	actions[net::RequestRoomId] = [] (User *user, const Json &) {
-		int id = 0;
+		static uint nextRoomId = 0;
+		static Semaphore sem(1);
+
 		Server *server = user->server();
+		int id = 0;
+
+		sem.acquire();
+		nextRoomId++;
 		for (int i = 0; i < 5; i++) {
-			id = std::rand() % 1000;
-			if (server->findRoom(id)) {
-				id = 0;
+			if (server->findRoom(nextRoomId) != nullptr) {
+				nextRoomId++;
 			} else {
+				id = nextRoomId;
 				break;
 			}
 		}
+		sem.release();
+
 		user->notify(net::RequestRoomId, id);
 	};
 
 	actions[net::RequestUserId] = [] (User *user, const Json &) {
-		int id = 0;
+		static uint nextUserId = 0;
+		static Semaphore sem(1);
+
 		Server *server = user->server();
+		int id = 0;
+
+		sem.acquire();
+		nextUserId++;
 		for (int i = 0; i < 5; i++) {
-			id = std::rand();
-			if (server->findUser(id)) {
-				id = 0;
+			if (server->findUser(nextUserId) != nullptr) {
+				nextUserId++;
 			} else {
+				id = nextUserId;
 				break;
 			}
 		}
+		sem.release();
+
 		user->notify(net::RequestUserId, id);
 	};
 
