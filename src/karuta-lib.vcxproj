@@ -96,6 +96,7 @@
     <ClInclude Include="core\GameDriver.h" />
     <ClInclude Include="core\GameLoader.h" />
     <ClInclude Include="core\global.h" />
+    <ClInclude Include="core\Object.h" />
     <ClInclude Include="core\Packet.h" />
     <ClInclude Include="core\protocol.h" />
     <ClInclude Include="core\Room.h" />
@@ -115,6 +116,7 @@
   <ItemGroup>
     <ClCompile Include="core\GameDriver.cpp" />
     <ClCompile Include="core\GameLoader.cpp" />
+    <ClCompile Include="core\Object.cpp" />
     <ClCompile Include="core\Packet.cpp" />
     <ClCompile Include="core\Room.cpp" />
     <ClCompile Include="core\Server.cpp" />

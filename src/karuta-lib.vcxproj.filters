@@ -46,6 +46,9 @@
     <ClCompile Include="core\GameDriver.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="core\Object.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="network\HostAddress.h">
@@ -100,6 +103,9 @@
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="core\RoomConfig.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Object.h">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
