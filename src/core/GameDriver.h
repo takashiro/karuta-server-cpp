@@ -20,7 +20,7 @@ takashiro@qq.com
 
 #pragma once
 
-#include "global.h"
+#include "Object.h"
 #include "UserAction.h"
 
 #include <string>
@@ -31,7 +31,7 @@ KA_NAMESPACE_BEGIN
 class Room;
 class User;
 
-class KA_DLL_EXPORT GameDriver
+class KA_DLL_EXPORT GameDriver : public Object
 {
 public:
 	GameDriver();
@@ -56,6 +56,9 @@ public:
 	virtual void removePlayer(User *user) = 0;
 
 	virtual const std::map<int, UserAction> *actions() const = 0;
+
+	static void started() {}
+	static void ended() {}
 
 protected:
 	KA_DECLARE_PRIVATE

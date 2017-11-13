@@ -79,7 +79,9 @@ void GameDriver::wait()
 void GameDriver::start()
 {
 	d->thread = new std::thread([this] () {
+		trigger(started);
 		run();
+		trigger(ended);
 	});
 }
 
