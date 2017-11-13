@@ -124,6 +124,18 @@ User *Server::next()
 		WebSocket *websocket = new WebSocket(socket);
 		User *user = new User(websocket);
 		user->setServer(this);
+
+		user->bind(User::disconnected, [user] () {
+			Room *room = user->room();
+			if (room) {
+				room->removeUser(user);
+			}
+			Server *server = user->server();
+			if (server) {
+				server->removeUser(user->id());
+			}
+		});
+
 		return user;
 	} else {
 		return nullptr;
@@ -133,7 +145,8 @@ User *Server::next()
 void Server::addUser(User *user)
 {
 	if (user->id() > 0) {
-		d->users[user->id()] = user;
+		uint id = user->id();
+		d->users[id] = user;
 	}
 }
 

@@ -32,20 +32,6 @@ takashiro@qq.com
 
 KA_NAMESPACE_BEGIN
 
-static void user_logout(User *user, const Json &args)
-{
-	Room *room = user->room();
-	if (room) {
-		room->removeUser(user);
-	}
-	Server *server = user->server();
-	if (server) {
-		server->removeUser(user->id());
-	}
-	user->notify(net::Logout);
-	user->disconnect();
-};
-
 static std::map<int, UserAction> CreateActions()
 {
 	static std::map<int, UserAction> actions;
@@ -110,7 +96,7 @@ static std::map<int, UserAction> CreateActions()
 				Server *server = user->server();
 				User *existed = server->findUser(uid);
 				if (existed) {
-					user_logout(existed, Json());
+					existed->disconnect();
 				}
 				server->addUser(user);
 			}
@@ -118,7 +104,10 @@ static std::map<int, UserAction> CreateActions()
 		user->notify(net::Login, uid);
 	};
 
-	actions[net::Logout] = user_logout;
+	actions[net::Logout] = [] (User *user, const Json &args) {
+		user->notify(net::Logout);
+		user->disconnect();
+	};
 
 	actions[net::CreateRoom] = [] (User *user, const Json &args) {
 		if (!user->isLoggedIn() || !args.isObject() || !args.contains("id") || !args.contains("game")) {

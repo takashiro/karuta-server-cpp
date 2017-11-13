@@ -24,8 +24,6 @@ takashiro@qq.com
 #include "Semaphore.h"
 #include "WebSocket.h"
 
-#include "protocol.h"
-
 #include <map>
 #include <sstream>
 
@@ -131,12 +129,7 @@ void User::exec()
 	std::string message;
 	for (;;) {
 		if (!d->socket->read(message)) {
-			if (d->actions) {
-				auto i = d->actions->find(net::Logout);
-				if (i != d->actions->end()) {
-					i->second(this, Json());
-				}
-			}
+			trigger(disconnected);
 			break;
 		}
 
@@ -180,6 +173,8 @@ void User::disconnect()
 	if (d->socket) {
 		d->socket->close();
 	}
+
+	trigger(disconnected);
 }
 
 void User::notify(int command)

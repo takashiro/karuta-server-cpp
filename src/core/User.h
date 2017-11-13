@@ -20,6 +20,7 @@ takashiro@qq.com
 
 #pragma once
 
+#include "Object.h"
 #include "UserAction.h"
 
 #include <map>
@@ -34,7 +35,7 @@ class WebSocket;
 
 struct HostAddress;
 
-class KA_DLL_EXPORT User
+class KA_DLL_EXPORT User : public Object
 {
 public:
 	User();
@@ -49,6 +50,7 @@ public:
 	void exec();
 
 	void disconnect();
+	static void disconnected() {}
 
 	void notify(int command);
 	void notify(int command, const Json &arguments);
