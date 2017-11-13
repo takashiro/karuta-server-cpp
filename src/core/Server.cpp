@@ -79,7 +79,7 @@ Room *Server::createRoom(uint id)
 	room = new Room(id);
 	d->rooms[id] = room;
 
-	room->onAbandon([this, id] () {
+	room->bind(Room::abandoned, [this, id] () {
 		d->rooms.erase(id);
 	});
 
@@ -96,7 +96,7 @@ Room *Server::createRoom(uint id, const std::string &driver)
 	if (room && room->loadDriver(driver)) {
 		d->rooms[id] = room;
 
-		room->onAbandon([this, id] () {
+		room->bind(Room::abandoned, [this, id] () {
 			d->rooms.erase(id);
 		});
 

@@ -45,7 +45,6 @@ struct Room::Private
 
 	GameLoader *driverLoader;
 	GameDriver *driver;
-	std::function<void()> abandonHandler;
 
 	Private()
 		: id(0)
@@ -59,13 +58,6 @@ struct Room::Private
 	{
 		if (driverLoader) {
 			delete driverLoader;
-		}
-	}
-
-	void abandoned()
-	{
-		if (abandonHandler) {
-			abandonHandler();
 		}
 	}
 };
@@ -167,7 +159,7 @@ void Room::removeUser(User *user)
 	if (user == d->owner) {
 		if (d->users.empty()) {
 			setOwner(nullptr);
-			d->abandoned();
+			trigger(abandoned);
 		} else {
 			User *owner = d->users.front();
 			setOwner(owner);
@@ -287,11 +279,6 @@ User *Room::broadcastRacingRequest(const std::vector<User *> &users, int timeout
 	std::unique_lock<std::mutex> lock(*requestMutex);
 	*requesting = false;
 	return nullptr;
-}
-
-void Room::onAbandon(const std::function<void()> &handler)
-{
-	d->abandonHandler = handler;
 }
 
 KA_NAMESPACE_END

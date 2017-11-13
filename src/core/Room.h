@@ -20,9 +20,8 @@ takashiro@qq.com
 
 #pragma once
 
-#include "global.h"
+#include "Object.h"
 
-#include <functional>
 #include <vector>
 #include <string>
 
@@ -32,7 +31,7 @@ class GameDriver;
 class Json;
 class User;
 
-class KA_DLL_EXPORT Room
+class KA_DLL_EXPORT Room : public Object
 {
 public:
 	Room(uint id);
@@ -66,7 +65,7 @@ public:
 	User *broadcastRacingRequest(int timeout = 0);
 	User *broadcastRacingRequest(const std::vector<User *> &users, int timeout = 0);
 
-	void onAbandon(const std::function<void()> &handler);
+	static void abandoned() {}
 
 private:
 	KA_DECLARE_PRIVATE
