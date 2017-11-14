@@ -69,7 +69,7 @@ void AbstractSocket::close()
 #ifdef KA_OS_WIN
 	closesocket(d->socket);
 #elif defined(KA_OS_LINUX)
-	::close(d->socket);
+	shutdown(d->socket, SHUT_RDWR);
 #endif
 }
 
