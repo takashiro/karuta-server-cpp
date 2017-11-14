@@ -93,6 +93,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="EventLoopTest.cpp" />
     <ClCompile Include="JsonTest.cpp" />
     <ClCompile Include="NetworkTest.cpp" />
     <ClCompile Include="PacketTest.cpp" />
