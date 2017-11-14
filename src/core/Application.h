@@ -31,6 +31,7 @@ public:
 	~Application();
 
 	int exec();
+	void quit();
 
 private:
 	KA_DECLARE_PRIVATE

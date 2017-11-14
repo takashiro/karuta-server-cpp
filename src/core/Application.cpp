@@ -29,10 +29,13 @@ takashiro@qq.com
 
 #include <string.h>
 
+#include "EventLoop.h"
 #include "Room.h"
 #include "Server.h"
 #include "User.h"
 #include "UserAction.h"
+
+#include <list>
 
 #ifdef KA_OS_WIN
 #include <Winsock2.h>
@@ -45,12 +48,12 @@ takashiro@qq.com
 KA_NAMESPACE_BEGIN
 
 #ifdef KA_OS_LINUX
-static Server *AppServer = nullptr;
+static std::list<Application *> AppList;
 
 static void on_sigterm(int sig)
 {
-	if (AppServer) {
-		AppServer->close();
+	for (Application *app : AppList) {
+		app->quit();
 	}
 }
 #endif
@@ -61,6 +64,7 @@ struct Application::Private
 	int maxUserNum;
 	ushort serverPort;
 	bool isInteractive;
+	EventLoop loop;
 
 	Private()
 		: maxUserNum(2)
@@ -98,6 +102,10 @@ Application::Application(int argc, const char *argv[])
 	WORD sockVersion = MAKEWORD(2, 0);
 	WSAStartup(sockVersion, &wsaData);
 #endif // KA_OS_WIN
+
+#ifdef KA_OS_LINUX
+	AppList.push_front(this);
+#endif // KA_OS_LINUX
 }
 
 Application::~Application()
@@ -117,9 +125,13 @@ int Application::exec()
 		return 1;
 	}
 
+	std::thread loop_thread([this]() {
+		d->loop.exec();
+	});
+
 	std::list<std::thread> listeners;
 
-	std::thread daemon([&]() {
+	std::thread server_daemon([&]() {
 		for (;;) {
 			User *user = d->server.next();
 			if (user == nullptr) {
@@ -141,19 +153,25 @@ int Application::exec()
 			//TO-DO: Execute command
 		}
 
-		d->server.close();
+		quit();
 	} else {
 		#ifdef KA_OS_LINUX
-		AppServer = &d->server;
 		signal(SIGTERM, on_sigterm);
 		#endif
 	}
 
-	daemon.join();
+	server_daemon.join();
 	for (std::thread &listener : listeners) {
 		listener.join();
 	}
+	loop_thread.join();
 	return 0;
+}
+
+void Application::quit()
+{
+	d->server.close();
+	d->loop.terminate();
 }
 
 KA_NAMESPACE_END
