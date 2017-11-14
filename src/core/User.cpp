@@ -19,6 +19,9 @@ takashiro@qq.com
 ************************************************************************/
 
 #include "User.h"
+
+#include "Event.h"
+#include "EventLoop.h"
 #include "Packet.h"
 #include "Json.h"
 #include "Semaphore.h"
@@ -28,6 +31,27 @@ takashiro@qq.com
 #include <sstream>
 
 KA_NAMESPACE_BEGIN
+
+class UserActionEvent : public Event
+{
+public:
+	UserActionEvent(UserAction action, User *user, Json &&args)
+		: action(action)
+		, user(user)
+		, args(std::move(args))
+	{
+	}
+
+	void exec() override
+	{
+		action(user, args);
+	}
+
+private:
+	UserAction action;
+	User *user;
+	Json args;
+};
 
 struct User::Private
 {
@@ -120,7 +144,7 @@ void User::setExtraAction(const std::map<int, UserAction> *actions)
 	d->extraActions = actions;
 }
 
-void User::exec()
+void User::exec(EventLoop *loop)
 {
 	if (d->socket == nullptr) {
 		return;
@@ -157,12 +181,20 @@ void User::exec()
 		auto i = d->actions->find(packet.command);
 		if (i != d->actions->end()) {
 			UserAction behavior = i->second;
-			behavior(this, packet.arguments);
+			if (loop) {
+				loop->push(new UserActionEvent(behavior, this, std::move(packet.arguments)));
+			} else {
+				behavior(this, packet.arguments);
+			}
 		} else if (d->extraActions != nullptr) {
 			i = d->extraActions->find(packet.command);
 			if (i != d->extraActions->end()) {
 				UserAction behavior = i->second;
-				behavior(this, packet.arguments);
+				if (loop) {
+					loop->push(new UserActionEvent(behavior, this, std::move(packet.arguments)));
+				} else {
+					behavior(this, packet.arguments);
+				}
 			}
 		}
 	}

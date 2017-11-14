@@ -22,7 +22,6 @@ takashiro@qq.com
 
 #include "global.h"
 
-#include <functional>
 #include <map>
 
 KA_NAMESPACE_BEGIN
@@ -30,7 +29,7 @@ KA_NAMESPACE_BEGIN
 class User;
 class Json;
 
-using UserAction = std::function<void(User *, const Json &)>;
+using UserAction = void(*)(User *, const Json &);
 
 KA_DLL_EXPORT const std::map<int, UserAction> &BasicActions();
 

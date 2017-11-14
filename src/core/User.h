@@ -27,6 +27,7 @@ takashiro@qq.com
 
 KA_NAMESPACE_BEGIN
 
+class EventLoop;
 class Json;
 class Room;
 class Semaphore;
@@ -47,7 +48,7 @@ public:
 	using Action = UserAction;
 	void setAction(const std::map<int, Action> *handlers);
 	void setExtraAction(const std::map<int, Action> *handlers);
-	void exec();
+	void exec(EventLoop *loop = nullptr);
 
 	void disconnect();
 	static void disconnected() {}

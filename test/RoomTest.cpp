@@ -27,6 +27,8 @@ takashiro@qq.com
 #include <User.h>
 #include <Json.h>
 
+#define ACTION_ID 1001
+
 namespace UnitTest
 {
 	TEST_CLASS(RoomUnit)
@@ -35,7 +37,6 @@ namespace UnitTest
 
 		TEST_METHOD(RacingRequestTest)
 		{
-			const int ACTION_ID = 1001;
 			ushort port = static_cast<ushort>(rand(1000, 0xFFFF));
 			Server server;
 			assert(server.listen(HostAddress::Any, port));
@@ -77,7 +78,7 @@ namespace UnitTest
 			});
 
 			std::map<int, User::Action> actions;
-			actions[ACTION_ID] = [ACTION_ID](User *user, const Json &arguments) {
+			actions[ACTION_ID] = [](User *user, const Json &arguments) {
 				int wait = arguments[0].toInt();
 				int num = arguments[1].toInt();
 				if (wait > 0) {
@@ -143,7 +144,7 @@ namespace UnitTest
 			});
 
 			std::map<int, User::Action> actions;
-			actions[11] = [&](User *user, const Json &arguments) {
+			actions[11] = [](User *user, const Json &arguments) {
 				int num = arguments.toInt();
 				user->reply(11, num + 1010);
 			};
