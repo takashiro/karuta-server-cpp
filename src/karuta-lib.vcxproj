@@ -104,6 +104,7 @@
     <ClInclude Include="core\Room.h" />
     <ClInclude Include="core\RoomConfig.h" />
     <ClInclude Include="core\Server.h" />
+    <ClInclude Include="core\SignalEvent.h" />
     <ClInclude Include="core\UserAction.h" />
     <ClInclude Include="core\User.h" />
     <ClInclude Include="network\AbstractSocket.h" />
@@ -123,6 +124,7 @@
     <ClCompile Include="core\Packet.cpp" />
     <ClCompile Include="core\Room.cpp" />
     <ClCompile Include="core\Server.cpp" />
+    <ClCompile Include="core\SignalEvent.cpp" />
     <ClCompile Include="core\UserAction.cpp" />
     <ClCompile Include="core\User.cpp" />
     <ClCompile Include="network\AbstractSocket.cpp" />

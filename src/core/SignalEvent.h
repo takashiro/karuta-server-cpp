@@ -20,34 +20,21 @@ takashiro@qq.com
 
 #pragma once
 
-#include "global.h"
-
-#include <functional>
+#include "Event.h"
+#include "Object.h"
 
 KA_NAMESPACE_BEGIN
 
-class KA_DLL_EXPORT Object
+class SignalEvent : public Event
 {
-	friend class SignalEvent;
-
 public:
-	Object();
-	~Object();
+	SignalEvent(Object *sender, Object::Signal signal);
 
-	using Signal = void(*)();
-	using Slot = std::function<void()>;
-
-	void bind(Signal signal, const Slot &slot);
-	void bind(Signal signal, Slot &&slot);
-	void unbind(Signal signal);
-
-protected:
-	void trigger(Signal signal);
+	void exec() override;
 
 private:
-	KA_DECLARE_PRIVATE	
+	Object *sender;
+	Object::Signal signal;
 };
-
-#define KA_SIGNAL(name) static void name () {}
 
 KA_NAMESPACE_END

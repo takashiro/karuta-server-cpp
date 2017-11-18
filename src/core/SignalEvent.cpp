@@ -18,36 +18,19 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 takashiro@qq.com
 ************************************************************************/
 
-#pragma once
-
-#include "global.h"
-
-#include <functional>
+#include "SignalEvent.h"
 
 KA_NAMESPACE_BEGIN
 
-class KA_DLL_EXPORT Object
+SignalEvent::SignalEvent(Object *sender, Object::Signal signal)
+	: sender(sender)
+	, signal(signal)
 {
-	friend class SignalEvent;
+}
 
-public:
-	Object();
-	~Object();
-
-	using Signal = void(*)();
-	using Slot = std::function<void()>;
-
-	void bind(Signal signal, const Slot &slot);
-	void bind(Signal signal, Slot &&slot);
-	void unbind(Signal signal);
-
-protected:
-	void trigger(Signal signal);
-
-private:
-	KA_DECLARE_PRIVATE	
-};
-
-#define KA_SIGNAL(name) static void name () {}
+void SignalEvent::exec()
+{
+	sender->trigger(signal);
+}
 
 KA_NAMESPACE_END

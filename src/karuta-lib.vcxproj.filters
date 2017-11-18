@@ -52,6 +52,9 @@
     <ClCompile Include="core\EventLoop.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="core\SignalEvent.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="network\HostAddress.h">
@@ -115,6 +118,9 @@
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="core\Event.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\SignalEvent.h">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
