@@ -37,6 +37,8 @@ namespace
 	}
 }
 
+#define ACTION_ID 1010
+
 namespace UnitTest
 {
 	TEST_CLASS(ServerUnit)
@@ -72,7 +74,7 @@ namespace UnitTest
 			int number = rand();
 
 			std::map<int, User::Action> actions;
-			actions[1010] = SetNumber;
+			actions[ACTION_ID] = SetNumber;
 
 			Server server;
 			assert(server.listen(HostAddress::Any, port));
@@ -82,7 +84,6 @@ namespace UnitTest
 				if (user) {
 					user->setAction(&actions);
 					user->exec();
-					delete user;
 				}
 			});
 
@@ -90,7 +91,7 @@ namespace UnitTest
 				WebSocket *socket = new WebSocket;
 				if (socket->open(HostAddress::Local, port)) {
 					User user(socket);
-					user.notify(1010, number);
+					user.notify(ACTION_ID, number);
 				} else {
 					delete socket;
 				}

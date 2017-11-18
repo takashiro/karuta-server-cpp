@@ -22,6 +22,7 @@ takashiro@qq.com
 
 #include <thread>
 
+#include <EventLoop.h>
 #include <Room.h>
 #include <Server.h>
 #include <User.h>
@@ -43,13 +44,19 @@ namespace UnitTest
 
 			int winner_answer = 0;
 			std::thread server_thread([&]() {
+				EventLoop *main_loop = new EventLoop;
+				std::thread main_thread([main_loop] () {
+					main_loop->exec();
+					delete main_loop;
+				});
+
 				std::vector<std::thread> listeners;
 				Room room(0);
 				for (int i = 0; i < 5; i++) {
 					User *user = server.next();
 					room.addUser(user);
 					std::thread thread([=]() {
-						user->exec();
+						user->exec(main_loop);
 					});
 					listeners.push_back(std::move(thread));
 				}
@@ -62,11 +69,13 @@ namespace UnitTest
 					users[i]->prepareRequest(ACTION_ID, args, 1);
 				}
 
+				room.setState(Room::State::Running);
 				User *winner = room.broadcastRacingRequest(5);
 				if (winner) {
 					Json reply = winner->getReply();
 					winner_answer = reply.toInt();
 				}
+				room.setState(Room::State::Stopped);
 
 				for (User *user : users) {
 					user->disconnect();
@@ -75,6 +84,9 @@ namespace UnitTest
 				for (std::thread &thread : listeners) {
 					thread.join();
 				}
+
+				main_loop->terminate();
+				main_thread.join();
 			});
 
 			std::map<int, User::Action> actions;
@@ -117,6 +129,12 @@ namespace UnitTest
 			int questions[5] = {rand(), rand(), rand(), rand(), rand()};
 			int answers[5];
 			std::thread server_thread([&]() {
+				EventLoop *main_loop = new EventLoop;
+				std::thread main_thread([=] () {
+					main_loop->exec();
+					delete main_loop;
+				});
+
 				Room room(0);
 				std::vector<std::thread> listeners;
 				for (int i = 0; i < 5; i++) {
@@ -124,11 +142,12 @@ namespace UnitTest
 					room.addUser(user);
 					user->prepareRequest(11, questions[i], 5);
 					std::thread listener([=]() {
-						user->exec();
+						user->exec(main_loop);
 					});
 					listeners.push_back(std::move(listener));
 				}
 
+				room.setState(Room::State::Running);
 				const std::vector<User *> &users = room.users();
 				room.broadcastRequest(users);
 				for (int i = 0; i < 5; i++) {
@@ -137,10 +156,13 @@ namespace UnitTest
 					answers[i] = reply.toInt();
 					user->disconnect();
 				}
+				room.setState(Room::State::Stopped);
 
 				for (std::thread &listener : listeners) {
 					listener.join();
 				}
+				main_loop->terminate();
+				main_thread.join();
 			});
 
 			std::map<int, User::Action> actions;
