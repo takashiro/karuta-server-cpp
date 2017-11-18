@@ -119,6 +119,25 @@ namespace UnitTest
 			assert(result = 10 * limit * num);
 		}
 
+		TEST_METHOD(ParallelPushTest)
+		{
+			EventLoop loop;
+			std::thread loop_thread([&] () {
+				loop.exec();
+			});
+
+			int result = 0;
+			std::thread worker([&] () {
+				for (int i = 0; i < 1000; i++) {
+					loop.push(new IntAddEvent(1, 1, result));
+				}
+				loop.terminate();
+			});
+
+			worker.join();
+			loop_thread.join();
+		}
+
 	};
 
 }

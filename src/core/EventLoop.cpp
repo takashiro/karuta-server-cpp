@@ -71,10 +71,10 @@ void EventLoop::terminate()
 
 void EventLoop::push(Event *event)
 {
-	d->ready.release(1);
 	d->mutex.lock();
 	d->events.push(event);
 	d->mutex.unlock();
+	d->ready.release(1);
 }
 
 KA_NAMESPACE_END
