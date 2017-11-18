@@ -31,14 +31,15 @@ KA_NAMESPACE_BEGIN
 
 struct Server::Private
 {
+	Room *lobby;
 	std::map<uint, Room *> rooms;
-	std::map<uint, User *> users;
 	TcpServer socket;
 };
 
 Server::Server()
 	: d(new Private)
 {
+	d->lobby = new Room(0);
 }
 
 Server::~Server()
@@ -47,6 +48,7 @@ Server::~Server()
 		delete p.second;
 	}
 
+	delete d->lobby;
 	delete d;
 }
 
@@ -125,14 +127,10 @@ User *Server::next()
 		User *user = new User(websocket);
 		user->setServer(this);
 
-		user->bind(User::disconnected, [user] () {
+		user->bind(User::disconnected, [this, user] () {
 			Room *room = user->room();
 			if (room) {
 				room->removeUser(user);
-			}
-			Server *server = user->server();
-			if (server) {
-				server->removeUser(user->id());
 			}
 		});
 
@@ -145,27 +143,18 @@ User *Server::next()
 void Server::addUser(User *user)
 {
 	if (user->id() > 0) {
-		uint id = user->id();
-		d->users[id] = user;
+		d->lobby->addUser(user);
 	}
 }
 
-void Server::removeUser(uint id)
+void Server::removeUser(User *user)
 {
-	auto iter = d->users.find(id);
-	if (iter != d->users.end()) {
-		d->users.erase(iter);
-	}
+	d->lobby->removeUser(user);
 }
 
 User *Server::findUser(uint id)
 {
-	auto iter = d->users.find(id);
-	if (iter != d->users.end()) {
-		return iter->second;
-	} else {
-		return nullptr;
-	}
+	return d->lobby->findUser(id);
 }
 
 KA_NAMESPACE_END

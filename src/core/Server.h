@@ -47,7 +47,7 @@ public:
 	User *next();
 
 	void addUser(User *user);
-	void removeUser(uint id);
+	void removeUser(User *id);
 	User *findUser(uint id);
 
 private:
