@@ -39,6 +39,8 @@ struct HostAddress;
 class KA_DLL_EXPORT User : public Object
 {
 public:
+	KA_SIGNAL(disconnected)
+
 	User();
 	User(WebSocket *socket);
 	~User();
@@ -50,8 +52,11 @@ public:
 	void setExtraAction(const std::map<int, Action> *handlers);
 	void exec(EventLoop *loop = nullptr);
 
+	bool isConnected() const;
 	void disconnect();
-	static void disconnected() {}
+
+	bool isOffline() const;
+	void setOffline(bool offline);
 
 	void notify(int command);
 	void notify(int command, const Json &arguments);

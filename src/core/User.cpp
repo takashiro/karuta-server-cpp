@@ -25,6 +25,7 @@ takashiro@qq.com
 #include "Packet.h"
 #include "Json.h"
 #include "Semaphore.h"
+#include "SignalEvent.h"
 #include "WebSocket.h"
 
 #include <map>
@@ -71,6 +72,8 @@ struct User::Private
 	Room *room;
 	Server *server;
 
+	bool offline;
+
 	Private()
 		: socket(nullptr)
 		, actions(nullptr)
@@ -79,6 +82,7 @@ struct User::Private
 		, id(0)
 		, room(nullptr)
 		, server(nullptr)
+		, offline(false)
 	{
 	}
 
@@ -153,7 +157,13 @@ void User::exec(EventLoop *loop)
 	std::string message;
 	for (;;) {
 		if (!d->socket->read(message)) {
-			trigger(disconnected);
+			delete d->socket;
+			d->socket = nullptr;
+			if (loop) {
+				loop->push(new SignalEvent(this, User::disconnected));
+			} else {
+				trigger(disconnected);
+			}
 			break;
 		}
 
@@ -162,6 +172,8 @@ void User::exec(EventLoop *loop)
 		ss >> packet;
 		if (packet.command == 0) {
 			d->socket->close();
+			delete d->socket;
+			d->socket = nullptr;
 			break;
 		}
 
@@ -200,13 +212,26 @@ void User::exec(EventLoop *loop)
 	}
 }
 
+bool User::isConnected() const
+{
+	return d->socket && d->socket->isConnected();
+}
+
 void User::disconnect()
 {
 	if (d->socket) {
 		d->socket->close();
 	}
+}
 
-	trigger(disconnected);
+bool User::isOffline() const
+{
+	return d->offline;
+}
+
+void User::setOffline(bool offline)
+{
+	d->offline = offline;
 }
 
 void User::notify(int command)
