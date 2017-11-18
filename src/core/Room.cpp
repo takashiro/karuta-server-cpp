@@ -45,12 +45,14 @@ struct Room::Private
 
 	GameLoader *driverLoader;
 	GameDriver *driver;
+	Room::State state;
 
 	Private()
 		: id(0)
 		, owner(nullptr)
 		, driverLoader(nullptr)
 		, driver(nullptr)
+		, state(Room::State::Waiting)
 	{
 	}
 
@@ -70,6 +72,9 @@ Room::Room(uint id)
 
 Room::~Room()
 {
+	for (User *user : d->users) {
+		delete user;
+	}
 	delete d;
 }
 
@@ -107,6 +112,12 @@ bool Room::loadDriver(const std::string &driver_name)
 	if (d->driver) {
 		d->driver->setName(driver_name);
 		d->driver->setRoom(this);
+		d->driver->bind(GameDriver::started, [this] () {
+			setState(State::Running);
+		});
+		d->driver->bind(GameDriver::ended, [this] () {
+			setState(State::Stopped);
+		});
 		return true;
 	} else {
 		return false;
@@ -116,6 +127,16 @@ bool Room::loadDriver(const std::string &driver_name)
 GameDriver *Room::driver() const
 {
 	return d->driver;
+}
+
+Room::State Room::state() const
+{
+	return d->state;
+}
+
+void Room::setState(State state)
+{
+	d->state = state;
 }
 
 const std::vector<User *> &Room::users() const
@@ -147,6 +168,11 @@ void Room::addUser(User *user)
 
 void Room::removeUser(User *user)
 {
+	if (State::Starting <= d->state && d->state <= State::Running) {
+		user->setOffline(true);
+		return;
+	}
+
 	for (auto iter = d->users.begin(); iter != d->users.end(); iter++) {
 		if (*iter == user) {
 			user->setRoom(nullptr);

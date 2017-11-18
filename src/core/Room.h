@@ -34,6 +34,16 @@ class User;
 class KA_DLL_EXPORT Room : public Object
 {
 public:
+	KA_SIGNAL(abandoned)
+
+	enum class State
+	{
+		Waiting,
+		Starting,
+		Running,
+		Stopped
+	};
+
 	Room(uint id);
 	~Room();
 
@@ -47,6 +57,9 @@ public:
 
 	bool loadDriver(const std::string &driver_name);
 	GameDriver *driver() const;
+
+	State state() const;
+	void setState(State state);
 
 	const std::vector<User *> &users() const;
 	void addUser(User *user);
@@ -64,8 +77,6 @@ public:
 	User *broadcastRacingRequest(int command, const Json &arguments, int timeout = 0);
 	User *broadcastRacingRequest(int timeout = 0);
 	User *broadcastRacingRequest(const std::vector<User *> &users, int timeout = 0);
-
-	static void abandoned() {}
 
 private:
 	KA_DECLARE_PRIVATE

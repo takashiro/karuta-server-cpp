@@ -208,6 +208,7 @@ static std::map<int, UserAction> CreateActions()
 			return;
 		}
 
+		room->setState(Room::State::Starting);
 		room->broadcastNotification(net::StartGame);
 		GameDriver *driver = room->driver();
 		if (driver) {
