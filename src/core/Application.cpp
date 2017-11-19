@@ -131,18 +131,19 @@ int Application::exec()
 
 	std::list<std::thread> listeners;
 
-	std::thread server_daemon([&]() {
+	EventLoop *main_loop = &d->loop;
+	std::thread server_daemon([&, main_loop]() {
 		for (;;) {
 			User *user = d->server.next();
 			if (user == nullptr) {
+				d->loop.terminate();
 				break;
 			}
 
 			//TO-DO: Login check
-
-			listeners.push_back(std::thread([user]() {
+			listeners.push_back(std::thread([main_loop, user]() {
 				user->setAction(&BasicActions());
-				user->exec();
+				user->exec(main_loop);
 			}));
 		}
 	});
@@ -160,11 +161,11 @@ int Application::exec()
 		#endif
 	}
 
+	loop_thread.join();
 	server_daemon.join();
 	for (std::thread &listener : listeners) {
 		listener.join();
 	}
-	loop_thread.join();
 	return 0;
 }
 
