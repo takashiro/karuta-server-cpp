@@ -62,7 +62,10 @@ GameLoader::GameLoader(const char *name)
 	d->dll = LoadLibrary(name);
 # endif //UNICODE
 #elif defined(KA_OS_LINUX)
-	d->dll = dlopen(name, RTLD_LAZY);
+	std::string libname = "./lib";
+	libname += name;
+	libname += ".so";
+	d->dll = dlopen(libname.c_str(), RTLD_LAZY);
 #endif
 
 	using Loader = GameDriver *(*)();
