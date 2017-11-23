@@ -10,7 +10,7 @@ cd $(dirname $0)
 if [ -f "../bin/release/karuta-server" ] && [ -f "../bin/release/libkaruta.so" ]; then
 	mkdir -p $ROOTDIR
 	cp ../bin/release/karuta-server $ROOTDIR
-	cp ../bin/release/libkaruta.so $ROOTDIR
+	cp ../bin/release/*.so $ROOTDIR
 else
 	echo "karuta-server hasn't been built."
 	return 1

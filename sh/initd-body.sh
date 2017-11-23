@@ -23,7 +23,8 @@ start() {
 		return 1
 	fi
 	echo 'Starting karuta-server...' >&2
-	local CMD="$ROOTDIR/$BIN --service > /dev/null & echo \$!"
+	cd $ROOTDIR
+	local CMD="./$BIN --service > /dev/null & echo \$!"
 	su -c "$CMD" $USER > "$PIDFILE" &
 	echo 'karuta-server is running.' >&2
 }
