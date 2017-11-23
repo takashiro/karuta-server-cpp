@@ -161,6 +161,8 @@ static std::map<int, UserAction> CreateActions()
 				new_room->addUser(user);
 				user->notify(net::UpdateRoom, driver->config());
 			}
+		} else {
+			user->notify(net::EnterRoom);
 		}
 	};
 
