@@ -95,7 +95,7 @@ static std::map<int, UserAction> CreateActions()
 
 				Server *server = user->server();
 				User *existed = server->findUser(uid);
-				if (existed) {
+				if (existed && existed != user) {
 					existed->disconnect();
 				}
 				server->addUser(user);
