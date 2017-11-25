@@ -139,30 +139,57 @@ static std::map<int, UserAction> CreateActions()
 	};
 
 	actions[net::EnterRoom] = [] (User *user, const Json &args) {
-		if (!user->isLoggedIn() || !args.isObject() || !args.contains("id") || !args.contains("game")) {
+		if (!user->isLoggedIn()) {
 			return;
 		}
 
-		Room *old_room = user->room();
-		if (old_room) {
-			old_room->removeUser(user);
-			user->setExtraAction(nullptr);
+		Server *server = user->server();
+		if (server == nullptr) {
+			user->disconnect();
+			delete user;
+			return;
 		}
 
-		uint room_id = args["id"].toUInt();
-		std::string game = args["game"].toString();
+		if (args.isObject() && args.contains("id")) {
+			// Find the room
+			uint room_id = args["id"].toUInt();
+			Room *new_room = server->findRoom(room_id);
+			if (args.contains("game")) {
+				std::string game = args["game"].toString();
+				GameDriver *driver = new_room->driver();
+				if (driver == nullptr || driver->name() != game) {
+					new_room = nullptr;
+				}
+			}
 
-		Server *server = user->server();
-		Room *new_room = server->findRoom(room_id);
-		if (new_room) {
-			GameDriver *driver = new_room->driver();
-			if (driver && driver->name() == game) {
-				user->setExtraAction(driver->actions());
-				new_room->addUser(user);
-				user->notify(net::UpdateRoom, driver->config());
+			if (new_room) {
+				// Leave the old room
+				Room *old_room = user->room();
+				if (old_room) {
+					old_room->removeUser(user);
+					user->setExtraAction(nullptr);
+				}
+
+				// Enter the new room
+				GameDriver *driver = new_room->driver();
+				if (driver) {
+					user->setExtraAction(driver->actions());
+					new_room->addUser(user);
+					user->notify(net::UpdateRoom, driver->config());
+				} else {
+					new_room->addUser(user);
+				}
+			} else {
+				// The room is not found
+				user->notify(net::EnterRoom);
 			}
 		} else {
-			user->notify(net::EnterRoom);
+			// Just want to exit the room
+			Room *room = user->room();
+			if (room) {
+				room->removeUser(user);
+				server->addUser(user);
+			}
 		}
 	};
 
