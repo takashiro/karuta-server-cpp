@@ -42,13 +42,14 @@ public:
 	std::vector<Room *> rooms() const;
 	Room *createRoom(uint id);
 	Room *createRoom(uint id, const std::string &driver);
-	Room *findRoom(uint id);
+	Room *findRoom(uint id) const;
 
 	User *next();
 
 	void addUser(User *user);
 	void removeUser(User *id);
-	User *findUser(uint id);
+	User *findUser(uint id) const;
+	bool findUser(User *user) const;
 
 private:
 	KA_DECLARE_PRIVATE

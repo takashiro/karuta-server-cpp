@@ -26,12 +26,13 @@ takashiro@qq.com
 #include "WebSocket.h"
 
 #include <map>
+#include <set>
 
 KA_NAMESPACE_BEGIN
 
 struct Server::Private
 {
-	Room *lobby;
+	std::set<User *> lobby;
 	std::map<uint, Room *> rooms;
 	TcpServer socket;
 };
@@ -39,7 +40,6 @@ struct Server::Private
 Server::Server()
 	: d(new Private)
 {
-	d->lobby = new Room(0);
 }
 
 Server::~Server()
@@ -48,7 +48,6 @@ Server::~Server()
 		delete p.second;
 	}
 
-	delete d->lobby;
 	delete d;
 }
 
@@ -109,7 +108,7 @@ Room *Server::createRoom(uint id, const std::string &driver)
 	}
 }
 
-Room *Server::findRoom(uint id)
+Room *Server::findRoom(uint id) const
 {
 	std::map<uint, Room *>::iterator iter = d->rooms.find(id);
 	if (iter != d->rooms.end()) {
@@ -142,19 +141,27 @@ User *Server::next()
 
 void Server::addUser(User *user)
 {
-	if (user->id() > 0) {
-		d->lobby->addUser(user);
-	}
+	d->lobby.insert(user);
 }
 
 void Server::removeUser(User *user)
 {
-	d->lobby->removeUser(user);
+	d->lobby.erase(user);
 }
 
-User *Server::findUser(uint id)
+User *Server::findUser(uint id) const
 {
-	return d->lobby->findUser(id);
+	for (User *user : d->lobby) {
+		if (user->id() == id) {
+			return user;
+		}
+	}
+	return nullptr;
+}
+
+bool Server::findUser(User *user) const
+{
+	return d->lobby.find(user) != d->lobby.end();
 }
 
 KA_NAMESPACE_END
