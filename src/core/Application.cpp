@@ -27,6 +27,7 @@ takashiro@qq.com
 #include <vector>
 #include <list>
 
+#include <signal.h>
 #include <string.h>
 
 #include "EventLoop.h"
@@ -35,28 +36,22 @@ takashiro@qq.com
 #include "User.h"
 #include "UserAction.h"
 
-#include <list>
-
 #ifdef KA_OS_WIN
 #include <Winsock2.h>
 #endif // KA_OS_WIN
 
-#ifdef KA_OS_LINUX
-#include <signal.h>
-#endif // KA_OS_LINUX
-
 KA_NAMESPACE_BEGIN
 
-#ifdef KA_OS_LINUX
 static std::list<Application *> AppList;
 
-static void on_sigterm(int sig)
+static void onSignal(int sig)
 {
-	for (Application *app : AppList) {
-		app->quit();
+	if (sig == SIGTERM) {
+		for (Application *app : AppList) {
+			app->quit();
+		}
 	}
 }
-#endif
 
 struct Application::Private
 {
@@ -103,9 +98,8 @@ Application::Application(int argc, const char *argv[])
 	WSAStartup(sockVersion, &wsaData);
 #endif // KA_OS_WIN
 
-#ifdef KA_OS_LINUX
 	AppList.push_front(this);
-#endif // KA_OS_LINUX
+	signal(SIGTERM, onSignal);
 }
 
 Application::~Application()
@@ -155,10 +149,6 @@ int Application::exec()
 		}
 
 		quit();
-	} else {
-		#ifdef KA_OS_LINUX
-		signal(SIGTERM, on_sigterm);
-		#endif
 	}
 
 	loop_thread.join();
