@@ -154,7 +154,7 @@ static std::map<int, UserAction> CreateActions()
 			// Find the room
 			uint room_id = args["id"].toUInt();
 			Room *new_room = server->findRoom(room_id);
-			if (args.contains("game")) {
+			if (new_room && args.contains("game")) {
 				std::string game = args["game"].toString();
 				GameDriver *driver = new_room->driver();
 				if (driver == nullptr || driver->name() != game) {
