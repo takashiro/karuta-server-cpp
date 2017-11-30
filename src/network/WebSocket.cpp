@@ -223,6 +223,7 @@ void WebSocket::close()
 	if (d->socket) {
 		d->activeClose = true;
 		d->sendClosingFrame();
+		d->socket->close();
 	}
 }
 

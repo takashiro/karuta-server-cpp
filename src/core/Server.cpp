@@ -59,6 +59,14 @@ bool Server::listen(const HostAddress &ip, ushort port)
 void Server::close()
 {
 	d->socket.close();
+
+	for (const std::pair<uint, Room *> &p : d->rooms) {
+		Room *room = p.second;
+		const std::vector<User *> &users = room->users();
+		for (User *user : users) {
+			user->disconnect();
+		}
+	}
 }
 
 std::vector<Room *> Server::rooms() const
