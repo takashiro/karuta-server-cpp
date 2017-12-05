@@ -151,6 +151,7 @@ void User::setExtraAction(const std::map<int, UserAction> *actions)
 void User::exec(EventLoop *loop)
 {
 	if (d->socket == nullptr) {
+		d->replySem.release();
 		return;
 	}
 
@@ -159,6 +160,8 @@ void User::exec(EventLoop *loop)
 		if (!d->socket->read(message)) {
 			delete d->socket;
 			d->socket = nullptr;
+			d->reply = Json();
+			d->replySem.release();
 			if (loop) {
 				loop->push(new SignalEvent(this, User::disconnected));
 			} else {
@@ -310,19 +313,23 @@ void User::executeRequest(const std::function<void(const Json &)> &callback)
 
 void User::executeRequest(std::function<void(const Json &)> &&callback)
 {
-	d->replyCallback = std::move(callback);
-	d->socket->write(d->requestMessage);
+	if (d->socket) {
+		d->replyCallback = std::move(callback);
+		d->socket->write(d->requestMessage);
+	}
 }
 
 void User::executeRequest()
 {
-	d->replyCallback = nullptr;
-	d->socket->write(d->requestMessage);
+	if (d->socket) {
+		d->replyCallback = nullptr;
+		d->socket->write(d->requestMessage);
+	}
 }
 
 Json User::waitForReply() const
 {
-	if (d->waitForReply()) {
+	if (d->socket && d->waitForReply()) {
 		return d->reply;
 	} else {
 		return Json();
