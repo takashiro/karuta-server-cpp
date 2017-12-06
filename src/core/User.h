@@ -70,7 +70,7 @@ public:
 	void executeRequest();
 
 	Json waitForReply() const;
-	Json getReply() const;
+	Json fetchReply() const;
 
 	uint id() const;
 	void setId(uint id);

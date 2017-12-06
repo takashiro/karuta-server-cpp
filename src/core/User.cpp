@@ -336,7 +336,7 @@ Json User::waitForReply() const
 	}
 }
 
-Json User::getReply() const
+Json User::fetchReply() const
 {
 	return d->reply;
 }

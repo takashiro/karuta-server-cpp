@@ -72,7 +72,7 @@ namespace UnitTest
 				room.setState(Room::State::Running);
 				User *winner = room.broadcastRacingRequest(5);
 				if (winner) {
-					Json reply = winner->getReply();
+					Json reply = winner->fetchReply();
 					winner_answer = reply.toInt();
 				}
 				room.setState(Room::State::Stopped);
@@ -152,7 +152,7 @@ namespace UnitTest
 				room.broadcastRequest(users);
 				for (int i = 0; i < 5; i++) {
 					User *user = users[i];
-					Json reply = user->getReply();
+					Json reply = user->fetchReply();
 					answers[i] = reply.toInt();
 					user->disconnect();
 				}
