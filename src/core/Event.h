@@ -27,6 +27,7 @@ KA_NAMESPACE_BEGIN
 class KA_DLL_EXPORT Event
 {
 public:
+	virtual ~Event() {}
 	virtual void exec() = 0;
 };
 
