@@ -29,10 +29,10 @@ struct Semaphore::Private
 {
 	std::mutex mutex;
 	std::condition_variable cond;
-	int count;
+	uint count;
 };
 
-Semaphore::Semaphore(int num)
+Semaphore::Semaphore(uint num)
 	: d(new Private)
 {
 	d->count = num;
@@ -44,7 +44,7 @@ Semaphore::~Semaphore()
 	delete d;
 }
 
-void Semaphore::acquire(int num)
+void Semaphore::acquire(uint num)
 {
 	std::unique_lock<std::mutex> lock(d->mutex);
 	while (d->count < num) {
@@ -53,7 +53,7 @@ void Semaphore::acquire(int num)
 	d->count -= num;
 }
 
-bool Semaphore::acquire(int num, int seconds)
+bool Semaphore::acquire(uint num, uint seconds)
 {
 	std::unique_lock<std::mutex> lock(d->mutex);
 	if (d->count < num) {
@@ -71,7 +71,7 @@ bool Semaphore::acquire(int num, int seconds)
 	}
 }
 
-void Semaphore::release(int num)
+void Semaphore::release(uint num)
 {
 	std::unique_lock<std::mutex> lock(d->mutex);
 	d->count += num;

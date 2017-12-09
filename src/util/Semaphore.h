@@ -24,16 +24,16 @@ takashiro@qq.com
 
 KA_NAMESPACE_BEGIN
 
-class Semaphore
+class KA_DLL_EXPORT Semaphore
 {
 public:
-	Semaphore(int num = 0);
+	Semaphore(uint num = 0);
 	~Semaphore();
 
-	void acquire(int num = 1);
-	bool acquire(int num, int seconds);
+	void acquire(uint num = 1);
+	bool acquire(uint num, uint seconds);
 
-	void release(int num = 1);
+	void release(uint num = 1);
 
 private:
 	KA_DECLARE_PRIVATE
