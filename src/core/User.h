@@ -41,6 +41,10 @@ class KA_DLL_EXPORT User : public Object
 public:
 	KA_SIGNAL(disconnected)
 
+	struct Data {
+		virtual ~Data() {}
+	};
+
 	User();
 	User(WebSocket *socket);
 	~User();
@@ -82,6 +86,9 @@ public:
 
 	Server *server() const;
 	void setServer(Server *server);
+
+	Data *data() const;
+	void setData(Data *data);
 
 private:
 	KA_DECLARE_PRIVATE

@@ -71,6 +71,7 @@ struct User::Private
 	uint id;
 	Room *room;
 	Server *server;
+	Data *data;
 
 	bool offline;
 
@@ -82,6 +83,7 @@ struct User::Private
 		, id(0)
 		, room(nullptr)
 		, server(nullptr)
+		, data(nullptr)
 		, offline(false)
 	{
 	}
@@ -374,6 +376,16 @@ Server *User::server() const
 void User::setServer(Server *server)
 {
 	d->server = server;
+}
+
+User::Data *User::data() const
+{
+	return d->data;
+}
+
+void User::setData(User::Data *data)
+{
+	d->data;
 }
 
 KA_NAMESPACE_END
